@@ -4,7 +4,7 @@ import AnimatedSide from './AnimatedSide'
 import SignForm from './SignForm'
 const Sign = () => {
 
-  const [sign, setsign] = useState(true)
+  const [sign, setsign] = useState(false)
   return (
     <div id='login'>
      
