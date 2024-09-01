@@ -4,6 +4,8 @@ html,body, #root{
     padding: 0;
 }
 
+
+
 #login {
   display: flex;
   width: 100%;
@@ -11,6 +13,14 @@ html,body, #root{
   flex-direction: row;
 }
 
+
+.passwordContainer {
+  position: relative;
+
+
+
+
+}
 
 #loginFormStyle{
   display: flex;
@@ -32,9 +42,12 @@ html,body, #root{
 }
 
 
+
+
 #dellLogo {
   height: 100px;
-  width: 100px;
+  width: 200px;
+
 }
 #forgotPasswordContainer{
   display: flex;
@@ -48,13 +61,28 @@ html,body, #root{
   margin-top: -10px;
 }
 
-#input{
+ #input{
   height: 40px;
-  border-radius: 10px;
-  border-width: 0px;
-  padding-left: 38px;
+  border-radius: 20px;
+  border-width: 2px;
   color: black;
   background-color: silver;
+  width: 100%;
+  padding-right: 40px; /* Space for the toggle icon */
+   padding-left: 35px; /* Space for the lock icon */
+   border: 1px solid black;
+   box-sizing: border-box;
+ } 
+
+
+
+
+#togglePassword {
+  position: absolute;
+  right:10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 
 #submit{
@@ -65,6 +93,25 @@ html,body, #root{
   background-color: silver;
 }
 
+#submit1 {
+  background-color: silver;
+  color: rgb(19, 18, 18); 
+  padding: 10px 10px; /* Padding */
+  border: none; 
+  border-radius: 50px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 16px; /* Font size */
+  display: block; /* Make it block-level */
+  margin: 20px auto; /* Center the button horizontally */
+  width: 30%; /* Full width */
+ 
+}
+
+#submit1:hover {
+  background-color: #26a0da;
+}
+
+
 #submit:hover{
   background-color: #26a0da;
 }
@@ -73,20 +120,38 @@ html,body, #root{
   display: flex;
   flex-direction: column;
   position: relative;
+  margin-bottom: 15px; /* רווח בין שדות */
   
 }
+
+#inputContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
 .inputIcon {
   position: absolute;
-  top: 66%;
+  top: 70%;
   left: 10px; /* Position the icon inside the input */
   transform: translateY(-50%);
   color: black; /* Adjust the icon color */
-  font-size: 25px; /* Adjust the icon size */
+  font-size: 20px; /* Adjust the icon size */
+
 }
 
 #signButton1:hover{
   background-color: #26a0da;
+  height: 40px;
+  border-radius: 20px;
+  border-width: 0px;
+  cursor: pointer;
+  background-color: silver;
+
 }
+
+
 #rightSide{
   flex : 1;
   display: flex;
@@ -118,14 +183,16 @@ html,body, #root{
 }
 
 #helloPargraph{
-  color: white;
-  font-size: 1.5em;
+  color: black;
+  font-size:40px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-weight: bold;
 }
 
 #pargraph{
-  color: white;
-  font-size: 1em;
+  color: black;
+  font-size:20px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   margin-top: -20px;
 }
 
@@ -193,28 +260,90 @@ html,body, #root{
 }
 
 
+input {
+  padding: 10px;
+  padding-left: 35px; /* מקום לאייקון */
+  font-size: 16px;
+  border:rgb(12, 12, 12);
+  border-radius: 5px;
+  border: 1px solid black;
+}
 
 
-
-/*  left side css */
-
-
-
-
-
-
-
-
-
-
-
-
+#roleSelect {
+  padding: 10px;
+  padding-left: 35px; /* מקום לאייקון */
+  font-size: 16px;
+  border: 1px solid black; /* מסגרת שחורה בעובי 2 פיקסלים */
+  border-radius: 50px;
+  background-color: silver;
+}
 
 
 /*  right side css  */
 
 #signButton{
-  width: 80;
-  height: 80;
+  width: 90;
+  height: 90;
+  background-color: silver;
+
 }
 
+#signUpFormStyle {
+  width: 90%; /* מאפשר גמישות ברוחב */
+  max-width: 350px; /* מקסימום רוחב לטופס */
+  margin: 0 auto; /* מרכז את ה-Form */
+  padding: 0px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 10px 10px 5px 12px#26a0da;
+
+}
+
+
+#formContainer {
+  border: 2px solid rgba(0, 0, 0, 0.1); /* מסגרת שקופה */
+   border-radius: 50px; /* פינות עגולות */
+   background-color: rgba(255, 255, 255, 0.2); 
+   padding: 20px ; 
+}
+
+
+input, select {
+  padding: 8px; /* ריווח פנימי קטן יותר */
+  padding-left: 30px; /* מקום לאייקון */
+  font-size: 14px; /* גודל גופן אחיד */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%; /* מתאים לרוחב המסגרת */
+  box-sizing: border-box; /* מבטיח שהרוחב כולל את ה-padding וה-border */
+}
+
+
+
+input, select {
+  margin-top: 5px; /* רווח מעל השדה */
+}
+
+
+
+#faceRecognitionButton {
+  width: 100%;
+  padding: 10px;
+  background-color: silver;
+  color: #0f0f0f;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+}
+
+
+#loginFormStyle {
+  width: 800%;
+  max-width:500px;
+  margin: auto;
+  padding: 20px;
+
+  border-radius: 8px;
+  box-shadow: 10px 10px 5px 12px #26a0da;
+}
