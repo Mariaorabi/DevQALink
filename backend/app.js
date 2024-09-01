@@ -45,6 +45,6 @@ app.use('/execution', execution) // localhost:3000/execution
 app.use('/reports', reports) // localhost:3000/reports
 
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.listen(process.env.Port, () => {
+  console.log(`Server is running on port ${process.env.Port}`);
 });
