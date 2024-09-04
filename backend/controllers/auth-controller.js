@@ -4,8 +4,12 @@ const bcrypt = require('bcrypt');
 const getNextSequenceValue = require('../Utility/nextId.js');
 const Counter = require('../models/counter-models.js');
 const saltRounds = 10;
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const postUser = async (req, res) => {
+  console.log('Request body:', req.body);
+
   try {
     const { fullName, username, password, email, phone, role } = req.body;
 
@@ -161,6 +165,9 @@ const getUser = async (req, res) => {
 // }
 
 const deleteUser = async (req, res) => {
+
+
+
   try {
     const { username } = req.params;
 
@@ -200,50 +207,108 @@ const deleteUser = async (req, res) => {
 
 
 
+// פונקציה לשליחת מייל לשחזור סיסמה
 
-// const deleteUser = async (req, res) => {
-//   try {
-//     const { username } = req.params;
-//     console.log(username)
-//     if (!username) {
-//       return res.status(400).json({ data: 'Username is required', code: 400 });
-//     }
-// // console.log(User.findOne({username}))
-//     // Find and delete the user by username
-//     const user=await User.findOne({username:username})
-//     if(!user){
-//       return res.status(404).json({ data: 'User not found', code: 404 });
 
-//     }
-//     const deletedUser = await User.deleteOne({ username });
-//     if (!deletedUser) {
-//       return res.status(404).json({ data: 'User not found', code: 404 });
-//     }
+const sendPasswordResetEmail = async (email, token) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',  // 'Gmail' לא מתוארת ב-nodemailer, השתמש ב-'gmail'
+    auth: {
+      user: 'your-email@gmail.com',
+      pass: 'your-app-password'  // השתמש בסיסמת אפליקציה אם יש לך אימות דו-שלבי
+    }
+  });
 
-//     // Optionally, adjust the next sequence value if needed
-//     // This part is usually not required in most cases
-//     // Be cautious with this approach as it can lead to gaps and inconsistencies
+  const mailOptions = {
+    from: 'your-email@gmail.com',
+    to: email,
+    subject: 'Password Reset',
+    text: `You requested a password reset. Use the following code to reset your password: ${token}`
+  };
 
-//     // Fetch the current sequence value
-//     // const currentSequence = await Counter.findById('userId');
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent successfully');
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+  }
+};
 
-//     // if (currentSequence) {
-//     //   // Decrement the sequence value (if you need to maintain continuity)
-//     //   await Counter.findByIdAndUpdate(
-//     //     'userId',
-//     //     { $inc: { sequence_value: -1 } }, // Decrement the sequence value by 1
-//     //     { new: false }
-//     //   );
-//     // }
 
-//     res.status(200).json({ data: 'User has been deleted successfully', code: 200 });
-//   } catch (error) {
-//     console.error('Error deleting user:', error);
-//     res.status(500).json({ data: 'An error occurred while deleting the user', code: 500 });
-//   }
-// };
 
- 
+
+// פונקציה לטיפול בבקשה לשחזור סיסמה
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log(email)
+    if (!email) {
+      return res.status(400).json({ data: 'Email is required', code: 400 });
+    }
+
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ data: 'User not found', code: 404 });
+    }
+
+
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // שעה אחת
+    await user.save();
+
+    await sendPasswordResetEmail(email, resetToken);
+
+    res.status(200).json({ data: 'Password reset email has been sent', code: 200 });
+  } catch (error) {
+    console.error('Error in forgotPassword function:', error.message);
+    res.status(500).json({ data: 'An error occurred while processing the request', code: 500 });
+  }
+};
+
+
+
+
+
+
+
+// פונקציה לטיפול בשינוי הסיסמה
+const resetPassword = async (req, res) => {
+  try {
+    const { email, token, newPassword } = req.body;
+
+    if (!email || !token || !newPassword) {
+      return res.status(400).json({ data: 'All fields are required', code: 400 });
+    }
+
+    const user = await User.findOne({
+      email,
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ data: 'Invalid token or token has expired', code: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({ data: 'Password has been reset successfully', code: 200 });
+  } catch (error) {
+    console.error('Error in resetPassword function:', error.message);
+    res.status(500).json({ data: 'An error occurred while resetting the password', code: 500 });
+  }
+};
+
+
 
 exports.postUser = postUser;
 exports.getAllUsers = getAllUsers;
@@ -252,3 +317,5 @@ exports.getUser = getUser;
 // exports.updateStudent = updateStudent;
 // exports.updatenewStudent = updatenewStudent;
 exports.deleteUser = deleteUser;
+exports.resetPassword = resetPassword ;
+exports.forgotPassword=forgotPassword;
