@@ -58,7 +58,7 @@ async function allocateResources(cluster, readyJob) {
         } else {
             await Job.deleteOne({ _id: readyJob._id }); // Fallback to deleteOne
         }
-
+        
         console.log("readyJob successfully removed.");
         return { job, readyJobCopy };
     } catch (error) {
@@ -94,9 +94,35 @@ async function allocatePhase3Job(readyJob,cluster){
 }
 
 async function runJob(runJob) {
-    // move on each tst and perform it 
-    // track the progress of the job depends on the tests progress
-    // for each test that ended should call runJob.testResult = the current test result and reasons
+    console.log(`Starting job: ${runJob.name}`);
+    console.log(`Starting time: ${new Date()}`);
+
+    // Simulate the running process for each test
+    for (let i = 0; i < runJob.tests.length; i++) {
+        const test = runJob.tests[i];
+        
+        console.log(`Running test ${i + 1}/${runJob.tests.length}: ${test}`);
+        
+        // Simulate the time taken by this test
+        await simulateTestRun();
+
+        // Simulate setting the test result
+        runJob.testResults.push(`Test ${i + 1} result: Success`); // You can randomize or vary this result
+        console.log(`Completed test ${i + 1}: ${test}`);
+    }
+
+    console.log(`Job ${runJob.name} completed.`);
+}
+
+function simulateTestRun() {
+    return new Promise((resolve) => {
+        // Simulate a test running for 1-3 seconds
+        const time = Math.floor(Math.random() * 3000) + 1000;
+        setTimeout(() => {
+            console.log(`Simulated test ran for ${time}ms`);
+            resolve();
+        }, time);
+    });
 }
 
 async function deallocateResources(cluster, currJob, readyJobCopy, pool) {

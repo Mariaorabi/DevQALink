@@ -3,28 +3,46 @@ const Job = require('./models/job');
 const jobController = require('./jobController');
 const mongoose = require('mongoose');
 const connectDB = require('./config/database');
- /*
+
+/*
 async function createDemoReadyJob() {
   try {
     // Connect to the database
     await connectDB();
 
+
     const readyJob = new Job({
-      name: 'Test Job 1',
+      name: 'Test Job 14',
       id: 1,
-      tests: ['test1', 'test2'],
+      tests: ['test12', 'test23'],
       version: '1.0.0',
       priority: 5,
       status: 'ready',
       cluster: null,
-      pool: '66cf0445e5c81c06a9488c7a',
+      pool: '66d5a8e34fddd005cc997415',
       schedType: 'one-time',
       estimatedRunTime: 60,
       date: new Date(),
       triggeredBy: 'test1@gmail.com'
     });
 
+    const readyJob2 = new Job({
+      name: 'Test Job 15',
+      id: 1,
+      tests: ['test5', 'test23'],
+      version: '1.0.0',
+      priority: 5,
+      status: 'ready',
+      cluster: null,
+      pool: '66d5a8e34fddd005cc997415',
+      schedType: 'one-time',
+      estimatedRunTime: 10,
+      date: new Date(),
+      triggeredBy: 'test2@gmail.com'
+    });
+
     await readyJob.save();
+    await readyJob2.save();
     console.log('demo ready job data created successfully!');
 
   }catch(error){
@@ -35,27 +53,17 @@ async function createDemoReadyJob() {
 }
 
 createDemoReadyJob();
-*/
-  /*const readyJob2 = new Job({
-    name: 'Test Job 2',
-    id: 1,
-    tests: ['test1', 'test2'],
-    version: '1.0.0',
-    priority: 5,
-    status: 'ready',
-    cluster: null,
-    pool: '66cf0445e5c81c06a9488c7a',
-    schedType: 'one-time',
-    estimatedRunTime: 10,
-    date: new Date(),
-    triggeredBy: 'test2@gmail.com'
-  });*/
 
   
+
+ /*
 async function startjob() {
   try{
     await connectDB();
     const job = await Job.findOne({ status: 'ready' }).sort({ date: 1 });
+    if(job)
+    await jobController.processJob(job);
+   job = await Job.findOne({ status: 'ready' }).sort({ date: 1 });
     if(job)
     await jobController.processJob(job);
   }catch(error){
@@ -69,3 +77,25 @@ async function startjob() {
 
 startjob();
 
+*/
+
+
+async function start2jobspararell(){
+    try {
+      await connectDB();
+  
+      // Find two jobs that are ready
+      const jobs = await Job.find({ status: 'ready' }).sort({ date: 1 }).limit(2);
+  
+      if (jobs.length > 0) {
+        // Process all jobs in parallel
+        await Promise.all(jobs.map(job => jobController.processJob(job)));
+      }
+    } catch (error) {
+      console.log('error: ' + error);
+    } finally {
+      //await mongoose.connection.close();
+    }
+  }
+
+  start2jobspararell();
