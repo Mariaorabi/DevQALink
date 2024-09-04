@@ -1,13 +1,15 @@
 
+var User = require('../models/auth-models.js');
 const bcrypt = require('bcrypt');
 const getNextSequenceValue = require('../Utility/nextId.js');
-const jwt = require('jsonwebtoken');
-const User = require('../models/auth-models.js');
 const Counter = require('../models/counter-models.js');
-const LoginUser = require('../models/login-models.js');
 const saltRounds = 10;
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 const postUser = async (req, res) => {
+  console.log('Request body:', req.body);
+
   try {
     const { fullName, username, password, email, phone, role } = req.body;
 
@@ -15,12 +17,7 @@ const postUser = async (req, res) => {
     if (!username || !password || !email || !phone || !role) {
       return res.status(400).json({ data: 'All required fields must be provided', code: 400 });
     }
-
-    const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-    if (existingUser) {
-      return res.status(400).json({ data: 'Username or Email already exists', code: 400 });
-    }
-
+    
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -56,6 +53,47 @@ const postUser = async (req, res) => {
 };
 
 
+
+// // Signup (Register) a new user
+// const postUser = async (req, res) => {
+//   try {
+//     const {fullName, username, password, email, phone, role } = req.body;
+
+//     // Check if all required fields are provided
+//     if ( !username || !password || !email || !phone || !role ) {
+//       return res.status(400).json({ data: 'All required fields must be provided', code: 400 });
+//     }
+//     const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+
+//     // Create a new User instance with the provided data
+//     const newUser = new User({
+//       fullName,
+//       username,
+//       password: hashedPassword,
+//       email,
+//       phone,
+//       role,
+//     });
+
+//     // Save the user to the database
+//     const response = await newUser.save();
+
+//     // Send success response
+//     res.status(201).json({ data: 'User has been saved successfully', code: 201 });
+//   } catch (error) {
+//     console.error('Error saving user:', error);
+//     if (error.code === 11000) {
+//       // Handle duplicate key error (e.g., unique constraint on username or email)
+//       res.status(400).json({ data: 'Username or Email already exists', code: 400 });
+//     } else {
+//       // Handle other errors
+//       res.status(500).json({ data: 'An error occurred while saving the user', code: 500 });
+//     }
+//   }
+// };
+
+// Get all users
 const getAllUsers = async (req, res) => {
   try {
     console.log('Received request to get all users');
@@ -67,7 +105,7 @@ const getAllUsers = async (req, res) => {
 
     // Send success response with the list of users
     res.status(200).json(users);
-  }
+  } 
   catch (error) {
     // Log the detailed error message
     console.error('Error in getAllUsers function:', error.message);
@@ -78,122 +116,58 @@ const getAllUsers = async (req, res) => {
 };
 
 
+// Get user by username and password
 const getUser = async (req, res) => {
   const { username, password } = req.body;
-
+  
   try {
+    // Validate input
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    console.log(`Received request to get user: ${username}`);
+
+    // Find the user by username
     const user = await User.findOne({ username });
+    
     if (!user) {
-      return res.status(404).json({ message: "Invalid Username or Password" });
+      console.log(`User not found: ${username}`);
+      return res.status(404).json({ message: "User not found" });
     }
 
-    let loginUser = await LoginUser.findOne({ username });
-
-    if (!loginUser) {
-      // Create a new login attempt record if it doesn't exist
-      loginUser = new LoginUser({ username });
-    }
-
-    // Check if 24 hours have passed and reset the values if needed
-    await checkIf24HoursPassed(loginUser);
-
-    // Check if the account is locked
-    const lockCheck = await checkIfLocked(loginUser);
-    if (lockCheck.isLocked) {
-      return res.status(403).json({ message: lockCheck.message });
-    }
+    console.log(`User found: ${username}`);
 
     // Compare the password with the hashed password
     const isMatch = await bcrypt.compare(password, user.password);
+    
     if (!isMatch) {
-      // Increment the 'tries' field on a failed login attempt
-      loginUser.tries += 1;
-
-      // Check if the number of tries has reached the limit
-      if (loginUser.tries >= 5) {
-        loginUser.isLocked = true;
-        loginUser.lockTime = new Date();
-        await loginUser.save();
-        return res.status(403).json({
-          message: `Account locked due to too many failed login attempts. Locked at: ${loginUser.lockTime}`,
-        });
-      }
-
-      await loginUser.save();
-      return res.status(401).json({ message: "Invalid Username or Password" });
+      console.log(`Invalid password for user: ${username}`);
+      return res.status(401).json({ message: "Invalid password" });
     }
 
-    // Reset the 'tries' field and unlock the account on a successful login
-    loginUser.tries = 0;
-    loginUser.isLocked = false;
-    loginUser.lockTime = null;
-    await loginUser.save();
-
-    // var token = jwt.sign({ userId: user._id }, 'your_jwt_secret', { expiresIn: '1h' });
-
-    // Create a JWT token
-    // const token = jwt.sign(
-    //   { userId: user._id, username: user.username, role: user.role },
-    //   process.env.JWT_SECRET,
-    //   { expiresIn: '1h' }
-    // );
+    console.log(`Password match for user: ${username}`);
     
-    // // Save the token to localStorage
-    // localStorage.setItem('token', token);
+    // Successful response
+    res.status(200).json(user);
     
-    // console.log('Token saved successfully to localStorage');
-
-    // Return the token and user info
-    res.status(200).json({ user: { username: user.username, role: user.role } });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error in getUser function:', error.message);
+    res.status(500).json({ message: "An error occurred while processing the request" });
   }
 };
 
 
-// Function to check if 24 hours have passed since the document was created
-const checkIf24HoursPassed = async (loginUser) => {
-  const now = new Date();
-  const resetDuration = 5* 60 * 1000; // 24 hours in milliseconds
 
-  if (now - loginUser.createdAt > resetDuration) {
-    // Reset the login attempts and unlock the account
-    loginUser.tries = 0;
-    loginUser.isLocked = false;
-    loginUser.lockTime = null;
-    await loginUser.save();
-  }
-};
-
-
-// Function to check if the account is locked due to too many failed attempts
-const checkIfLocked = async (loginUser) => {
-  const now = new Date();
-  const lockDuration = 30 * 1000; // 30 seconds in milliseconds
-
-  if (loginUser.isLocked) {
-    const timeDifference = now - loginUser.lockTime;
-
-    if (timeDifference > lockDuration) {
-      // Reset the lock if 30 seconds have passed
-      loginUser.tries = 0;
-      loginUser.isLocked = false;
-      loginUser.lockTime = null;
-      await loginUser.save();
-    } else {
-      // Account is still locked
-      return {
-        isLocked: true,
-        message: `Account locked due to too many failed login attempts. Please try again after 30 seconds. Locked at: ${loginUser.lockTime}`,
-      };
-    }
-  }
-
-  return { isLocked: false };
-};
-
+// const getOneStudent=async (req,res)=>{
+//     var response = await Student.findOne();
+//     res.json(response);
+// }
 
 const deleteUser = async (req, res) => {
+
+
+
   try {
     const { username } = req.params;
 
@@ -212,7 +186,7 @@ const deleteUser = async (req, res) => {
     if (!deletedUser) {
       return res.status(404).json({ data: 'User not found', code: 404 });
     }
-    const currentSequence = await Counter.findById('userId');
+     const currentSequence = await Counter.findById('userId');
 
     if (currentSequence) {
       // Decrement the sequence value (if you need to maintain continuity)
@@ -233,9 +207,115 @@ const deleteUser = async (req, res) => {
 
 
 
+// פונקציה לשליחת מייל לשחזור סיסמה
+
+
+const sendPasswordResetEmail = async (email, token) => {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',  // 'Gmail' לא מתוארת ב-nodemailer, השתמש ב-'gmail'
+    auth: {
+      user: 'your-email@gmail.com',
+      pass: 'your-app-password'  // השתמש בסיסמת אפליקציה אם יש לך אימות דו-שלבי
+    }
+  });
+
+  const mailOptions = {
+    from: 'your-email@gmail.com',
+    to: email,
+    subject: 'Password Reset',
+    text: `You requested a password reset. Use the following code to reset your password: ${token}`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Password reset email sent successfully');
+  } catch (error) {
+    console.error('Error sending password reset email:', error);
+  }
+};
+
+
+
+
+// פונקציה לטיפול בבקשה לשחזור סיסמה
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    console.log(email)
+    if (!email) {
+      return res.status(400).json({ data: 'Email is required', code: 400 });
+    }
+
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ data: 'User not found', code: 404 });
+    }
+
+
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // שעה אחת
+    await user.save();
+
+    await sendPasswordResetEmail(email, resetToken);
+
+    res.status(200).json({ data: 'Password reset email has been sent', code: 200 });
+  } catch (error) {
+    console.error('Error in forgotPassword function:', error.message);
+    res.status(500).json({ data: 'An error occurred while processing the request', code: 500 });
+  }
+};
+
+
+
+
+
+
+
+// פונקציה לטיפול בשינוי הסיסמה
+const resetPassword = async (req, res) => {
+  try {
+    const { email, token, newPassword } = req.body;
+
+    if (!email || !token || !newPassword) {
+      return res.status(400).json({ data: 'All fields are required', code: 400 });
+    }
+
+    const user = await User.findOne({
+      email,
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ data: 'Invalid token or token has expired', code: 400 });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({ data: 'Password has been reset successfully', code: 200 });
+  } catch (error) {
+    console.error('Error in resetPassword function:', error.message);
+    res.status(500).json({ data: 'An error occurred while resetting the password', code: 500 });
+  }
+};
+
 
 
 exports.postUser = postUser;
 exports.getAllUsers = getAllUsers;
 exports.getUser = getUser;
+// exports.getnewStudent = getnewStudent;
+// exports.updateStudent = updateStudent;
+// exports.updatenewStudent = updatenewStudent;
 exports.deleteUser = deleteUser;
+exports.resetPassword = resetPassword ;
+exports.forgotPassword=forgotPassword;
