@@ -30,7 +30,7 @@ mongoose.connect(uri).then(async () => {
 //mongoose.connect('mongodb+srv://salehsh:SratWNyJDJiB1jcA@fsai.jxwnzzj.mongodb.net/?retryWrites=true&w=majority&appName=fsai');
 
 const userSchema = new mongoose.Schema({
-  userId:{
+  userId: {
     type: Number,
     unique: true
   },
@@ -61,21 +61,8 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['Software Tester', 'Software Developer'],
-  },
-
-
-  resetPasswordToken: {
-    type: String,
-
-    
-  },
-  resetPasswordExpires: {
-    type: Date,
-    
-   
   }
 
-  
 });
 
 
