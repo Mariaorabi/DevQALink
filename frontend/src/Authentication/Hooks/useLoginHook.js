@@ -2,14 +2,12 @@ import { useState } from 'react';
 
 const useLoginHook = (props) => {
   
-  const [data, setData] = useState(null); // Set initial state to null
+  const [data, setData] = useState(null); 
   const [status, setStatus] = useState(null);
-  const [error, setError] = useState(null); // To handle and display errors
+  const [error, setError] = useState(null); 
   
   const login = () => {
-    setStatus(null);
-    setData(null);
-    setError(null);
+    
     fetch('http://localhost:3000/auth/getuser', {
       method: 'POST',
       headers: {
