@@ -61,8 +61,21 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['Software Tester', 'Software Developer'],
+  },
+
+
+  resetPasswordToken: {
+    type: String,
+
+    
+  },
+  resetPasswordExpires: {
+    type: Date,
+    
+   
   }
 
+  
 });
 
 
