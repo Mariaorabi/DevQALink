@@ -1,36 +1,97 @@
-import React from 'react'
+// Login.js
+import React, { useState, useEffect } from 'react';
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
+import { Link, useNavigate } from 'react-router-dom';
+import useLoginHook from '../../Hooks/useLoginHook';
+import { useDispatch } from 'react-redux';
+import '../LoginCss/Login.css';
+import Spinner from '../../../Components/Spinner';
 const Login = () => {
-  return (
-    <form id='loginFormStyle'>
-    <div id='inputContainer'>
+  const [input, setInput] = useState({});
+  const { data, status, error,isLoading, login } = useLoginHook({ data: input });
+  const [msg, setMsg] = useState(null);
 
-    <label>Username</label>
-    <MdEmail className="inputIcon" />
-    <input  type='text' placeholder='Username' id='input' />
-    </div>
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    <div id='inputContainer'>
+  const handleChange = (e) => {
+    setMsg(null);
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit =  (e) => {
+    e.preventDefault();
+    setMsg(null)
+    login(); 
+  };
+
+  useEffect(() => {
+    if (status === 200) {
+      dispatch({ type: "SET_USER", payload: data })
+      navigate('/forgot-password')
       
-      <label>Password</label>
-      <RiLockPasswordFill className='inputIcon'/>
+    } else if (status && status !== 200) {
+      setMsg(`${error}`);
+    }
+    // if (error) {
+    //   setMsg(`${error}`);
+    // }
 
-    <input type='password' placeholder='Password' id='input' />
-    </div>
+  }, [data]);
+  
 
-<div id='forgotPasswordContainer'>
+  return (
+    
+    
+    <form id='loginFormStyle' onSubmit={handleSubmit}>
+      {/* <Spinner isLoading={true}/> */}
+      <div id='LoginformContainer'>
+        <div id='inputContainer'>
+          <label>Username</label>
+          <MdEmail className="inputIcon" />
+          <input type='text' placeholder='Username' id='input' required name='username' onChange={handleChange} />
+        </div>
 
-    <label id='forgotPasswordLabel'>Forgot password?</label>
-</div>
-    <input type='submit' value='Login' id='submit' />
-    <div id='or'>
-    <p>or</p>
+        <div id='inputContainer'>
+          <label>Password</label>
+          <RiLockPasswordFill className='inputIcon' />
+          <input type='password' placeholder='Password' id='input' required name='password' onChange={handleChange} />
+        </div>
 
-    </div>
-  <button id='faceRecognitionButton'>Login with face recognition</button>
-  </form>
-  )
+        <div id='forgotPasswordContainer'>
+          <Link to="/forgot-password" id='forgotPasswordLabel'>Forgot password?</Link>
+        </div>
+
+        <input type='submit' value='Login' id='submit' />
+
+        <div id='or'>
+          <p>or</p>
+        </div>
+
+        <button id='faceRecognitionButton'>Login with Face Recognition</button>
+      </div>
+      
+
+
+      <Spinner isLoading={isLoading}/>
+
+      {msg &&
+      <div id='ErrorMsgContainer'>
+            
+            <h3 id='errorMsg' >{msg}</h3> 
+
+      </div>
+              }
+
+
+
+    
+    </form>
+  );
 }
 
-export default Login
+export default Login;

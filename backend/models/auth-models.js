@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-const getNextSequenceValue = require('../Utility/nextId');
 const Counter = require('./counter-models');
 
 // mongoose.connect('mongodb://localhost:27017/Customer');
@@ -61,8 +60,21 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['Software Tester', 'Software Developer'],
+  },
+
+
+  resetPasswordToken: {
+    type: String,
+
+    
+  },
+  resetPasswordExpires: {
+    type: Date,
+    
+   
   }
 
+  
 });
 
 
