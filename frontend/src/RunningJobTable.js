@@ -48,19 +48,35 @@ function createData(id, name, version, status, pool, schedType, estimatedRuntime
     };
 }
 
-// Adjusted Row Component
 function Row(props) {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
-    const [actualRuntime, setActualRuntime] = React.useState(formatElapsedTime(row.startTime));
+    const [actualRuntimes, setActualRuntimes] = React.useState(
+        row.tests.map((test) => ({
+            name: test.name,
+            runtime: formatElapsedTime(row.startTime), // Initialize runtime based on start time
+            test_result: test.test_result, // Track test result to know when to stop the timer
+        }))
+    );
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setActualRuntime(formatElapsedTime(row.startTime));
+            setActualRuntimes((prevRuntimes) =>
+                prevRuntimes.map((testRuntime, idx) => {
+                    // Only update if the test hasn't finished
+                    if (row.tests[idx].test_result === '') {
+                        return {
+                            ...testRuntime,
+                            runtime: formatElapsedTime(row.startTime),
+                        };
+                    }
+                    return testRuntime; // Do not update the time if test is "Finished"
+                })
+            );
         }, 1000);
 
         return () => clearInterval(interval);
-    }, [row.startTime]);
+    }, [row.startTime, row.tests]);
 
     return (
         <React.Fragment>
@@ -83,7 +99,7 @@ function Row(props) {
                 <TableCell>{row.estimatedRuntime}</TableCell>
                 <TableCell>{row.date}</TableCell>
                 <TableCell>{row.triggeredBy}</TableCell>
-                <TableCell>{actualRuntime}</TableCell>
+                <TableCell>{formatElapsedTime(row.startTime)}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
@@ -102,27 +118,43 @@ function Row(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-  {row.tests.map((test, index) => (
-    <TableRow key={index}>
-      {/* Test Name */}
-      <TableCell>{test.name}</TableCell>
+                                    {actualRuntimes.map((testRuntime, index) => (
+                                        <TableRow
+                                            key={index}
+                                            className={
+                                                row.tests[index].test_result === 'Pass'
+                                                    ? 'test-pass'
+                                                    : row.tests[index].test_result === 'Fail'
+                                                    ? 'test-fail'
+                                                    : 'test-pending'
+                                            }
+                                        >
+                                            {/* Test Name */}
+                                            <TableCell>{testRuntime.name}</TableCell>
 
-      {/* Test Status: If test_result is Pass or Fail, display 'Finished', otherwise the actual status */}
-      <TableCell>
-        {test.test_result ? 'Finished' : test.status}
-      </TableCell>
+                                            {/* Test Status */}
+                                            <TableCell>
+                                                {row.tests[index].test_result
+                                                    ? 'Finished'
+                                                    : row.tests[index].status}
+                                            </TableCell>
 
-      {/* Elapsed Time */}
-      <TableCell>{formatElapsedTime(row.startTime)}</TableCell>
+                                            {/* Elapsed Time */}
+                                            <TableCell>
+                                                {testRuntime.runtime}
+                                            </TableCell>
 
-      {/* Test Result: Pass/Fail or Pending */}
-      <TableCell className={test.test_result === 'pass' ? 'test-pass' : test.test_result === 'fail' ? 'test-fail' : ''}>
-        {test.test_result ? (test.test_result === 'pass' ? 'Pass' : 'Fail') : 'Pending'}
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
-
+                                            {/* Test Result */}
+                                            <TableCell>
+                                                {row.tests[index].test_result
+                                                    ? row.tests[index].test_result === 'Pass'
+                                                        ? 'Pass'
+                                                        : 'Fail'
+                                                    : 'Pending'}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
                             </Table>
                         </Box>
                     </Collapse>
@@ -131,6 +163,7 @@ function Row(props) {
         </React.Fragment>
     );
 }
+
 
 // Main JobTable component
 export default function JobTable() {
