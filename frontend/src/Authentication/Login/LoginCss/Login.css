@@ -31,26 +31,19 @@ html,body, #root{
 }
 
 #errorMsg{
-  color: red; 
-  font-size: 16px; 
-  background-color: #ffe6e6; 
-  border: 1px solid red; 
-  padding: 10px; 
-  border-radius: 5px;
-  margin-top: 10px; 
-  font-weight: bold; 
-  text-align: center; 
-}
-
-#loginFormStyle{
-  display: flex;
-  flex-direction: column;
-  height: 360px;
-  width: 300px;
+  color: #eb081e; /* Dark red text for readability */
+  font-size: 16px;
+  background-color: #f8d7da; /* Light red background for error indication */
+  border: 1px solid #f5c6cb; /* Border color matching the background tone */
   padding: 10px;
-  justify-content: space-around;
-
+  border-radius: 5px;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */ 
 }
+
+
 
 #or{
   display: flex;
@@ -310,22 +303,49 @@ input {
 }
 
 #signUpFormStyle {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   width: 90%; /* מאפשר גמישות ברוחב */
-  max-width: 350px; /* מקסימום רוחב לטופס */
-  margin: 0 auto; /* מרכז את ה-Form */
+  max-width: 550px; /* מקסימום רוחב לטופס */
   padding: 0px;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 10px 10px 5px 12px#26a0da;
+  height: 70%; 
+  margin-bottom: 30px;
 
 }
+
+#Successmsg {
+  color: #155724; 
+  font-size: 16px;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
 
 
 #formContainer {
   border: 2px solid rgba(0, 0, 0, 0.1); /* מסגרת שקופה */
+  border-radius: 50px; /* פינות עגולות */
+  background-color: rgba(255, 255, 255, 0.2); 
+  padding: 20px ; 
+  margin-bottom: 10px;
+}
+
+#LoginformContainer {
+  border: 2px solid rgba(0, 0, 0, 0.1); /* מסגרת שקופה */
    border-radius: 50px; /* פינות עגולות */
    background-color: rgba(255, 255, 255, 0.2); 
    padding: 20px ; 
+   margin-bottom: 10px;
 }
 
 
@@ -359,11 +379,12 @@ input, select {
 
 
 #loginFormStyle {
-  width: 800%;
+  display: flex;
+  flex-direction: column;
+  width: 4000px;
   max-width:500px;
-  margin: auto;
   padding: 20px;
-
+  justify-content: flex-start;
   border-radius: 8px;
   box-shadow: 10px 10px 5px 12px #26a0da;
 }
@@ -381,4 +402,20 @@ margin-top: 5%;
 
 
 
+}
+
+
+.loading-spinner {
+  color: #333;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  border: 6px solid silver; 
+  border-top: 6px solid #3498db; 
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

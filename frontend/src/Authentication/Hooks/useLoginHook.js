@@ -5,34 +5,41 @@ const useLoginHook = (props) => {
   const [data, setData] = useState(null); 
   const [status, setStatus] = useState(null);
   const [error, setError] = useState(null); 
+
+
+  const [isLoading, setisLoading] = useState(false)
   
-  const login = () => {
-    
-    fetch('http://localhost:3000/auth/getuser', {
+  const login = async () => {
+    setisLoading(true)
+    await fetch('http://localhost:3000/auth/getuser', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(props.data)
     })
-      .then((res) => {
+      .then(async (res) => {
         setStatus(res.status); 
         if (!res.ok) {
-          throw new Error('Username or password is incorrect');
+          const error = await res.json();
+          throw new Error(error.message);
         }
         return res.json();
       })
       .then((data) => {
         setData(data);
-        // console.log(data);
       })
       .catch((err) => {
-        setData(111);
-        setError(err.message); 
-      });
+        setError(err.message);
+        setData(err);
+      })
+      .finally(()=> {
+
+        setisLoading(false)
+      })
   };
 
-  return { data, status, error, login };
+  return { data, status, error,isLoading, login };
 };
 
 export default useLoginHook;

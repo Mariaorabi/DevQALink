@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdEmail } from "react-icons/md";
+import useForgotPasswordHook from '../Hooks/useForgotPasswordHook';
+import { useNavigate } from 'react-router-dom';
+import Spinner from '../../Components/Spinner';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -10,38 +13,52 @@ const ForgotPassword = () => {
   });
 
 
+  const {data,status,error,isLoading,forgotPassword} = useForgotPasswordHook({formData : formData});
+
+  const [msg, setmsg] = useState(null)
+
+
+  const [id, setid] = useState("")
+
+
+
+  const navigate = useNavigate();
 
 
 
   const handleChange = (e) => {
   setFormData({...formData, [e.target.name] : e.target.value})
+  setmsg(null)
   };
 
   
     const handleSubmit = async (event) => {
       event.preventDefault();
+      setmsg(null)
+      forgotPassword();
       
-      try {
-        const response = await fetch('http://localhost:3000/auth/forgot-password', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email: formData.email }), // שלח את כתובת הדוא"ל בלבד
-        });
+  }
+
+  useEffect(() => {
     
-        const responseData = await response.json();
-        
-        if (response.ok) {
-          alert(responseData.message || "Password reset link sent successfully!");
-        } else {
-          alert(`Error: ${responseData.message}`);
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to send reset link. Please try again. Error details: ' + error.message);
-      }
-    };
+  
+   if(status===200){
+    console.log(1231231)
+    setmsg(data.data)
+    setid("Successmsg")
+    // navigate("/")
+   }
+
+   else if(status && status !== 200){
+    setmsg(`${error}`);
+    setid("errorMsg")
+   }
+
+  //  else {
+  //   setmsg(`${error}`);
+  //   setid("errorMsg")
+  // }
+  }, [data])
   
 
   return (
@@ -63,6 +80,12 @@ const ForgotPassword = () => {
         </div>
         <input type='submit' value='Send Reset Link' id='submit' />
       </div>
+
+
+      <Spinner isLoading={isLoading}/>
+      {msg && 
+      <div id={id}>{msg}</div>
+      }
     </form>
   );
 }

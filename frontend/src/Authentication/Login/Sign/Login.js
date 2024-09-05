@@ -6,9 +6,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import useLoginHook from '../../Hooks/useLoginHook';
 import { useDispatch } from 'react-redux';
 import '../LoginCss/Login.css';
+import Spinner from '../../../Components/Spinner';
 const Login = () => {
   const [input, setInput] = useState({});
-  const { data, status, error, login } = useLoginHook({ data: input });
+  const { data, status, error,isLoading, login } = useLoginHook({ data: input });
   const [msg, setMsg] = useState(null);
 
   const navigate = useNavigate();
@@ -24,29 +25,31 @@ const Login = () => {
 
   const handleSubmit =  (e) => {
     e.preventDefault();
+    setMsg(null)
     login(); 
   };
 
   useEffect(() => {
     if (status === 200) {
-      console.log(data)
       dispatch({ type: "SET_USER", payload: data })
       navigate('/forgot-password')
       
     } else if (status && status !== 200) {
-      setMsg("Login Failed");
-    }
-    if (error) {
       setMsg(`${error}`);
     }
+    // if (error) {
+    //   setMsg(`${error}`);
+    // }
 
   }, [data]);
   
 
   return (
     
+    
     <form id='loginFormStyle' onSubmit={handleSubmit}>
-      <div id='formContainer'>
+      {/* <Spinner isLoading={true}/> */}
+      <div id='LoginformContainer'>
         <div id='inputContainer'>
           <label>Username</label>
           <MdEmail className="inputIcon" />
@@ -74,15 +77,18 @@ const Login = () => {
       
 
 
+      <Spinner isLoading={isLoading}/>
 
+      {msg &&
       <div id='ErrorMsgContainer'>
-
-        {msg &&
-
-            <h3 id='errorMsg' >{msg}</h3>
-        }
+            
+            <h3 id='errorMsg' >{msg}</h3> 
 
       </div>
+              }
+
+
+
     
     </form>
   );
