@@ -96,8 +96,12 @@ async function allocatePhase3Job(readyJob,cluster){
 async function runJob(runJob) {
     console.log(`Starting job: ${runJob.name}`);
     console.log(`Starting time: ${new Date()}`);
+    //add start run time 
+    // expected
+    // overall run > 1.5 * expected stop the loop and mark the test as fail + "time out exceeded
 
     // Simulate the running process for each test
+
     for (let i = 0; i < runJob.tests.length; i++) {
         const test = runJob.tests[i];
         
