@@ -1,15 +1,28 @@
 import { MdEmail } from "react-icons/md";
 import { FaUser, FaPhone } from "react-icons/fa";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiLockPasswordFill, RiEyeFill, RiEyeOffFill } from "react-icons/ri";
+import useSignupHook from "../../Hooks/useSignupHook";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Spinner from "../../../Components/Spinner";
 
 const Signup = () => {
 
   const [showPassword, setShowPassword] = useState(false);
+
+
+  const [msg, setmsg] = useState(null)
+
+  
+  const dispatch = useDispatch();
+  
+  const navigate = useNavigate();
+  
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
+  
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
@@ -18,45 +31,54 @@ const Signup = () => {
     phone: '',
     role: ''
   });
-
+  const {data,status,error,isLoading, signup} = useSignupHook({data:formData});
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
       [name]: value
     }));
+
+    setmsg(null);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    try {
-      const response = await fetch('http://localhost:3000/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-  
-      const responseData = await response.json();
-      
-      if (response.ok) {
-        alert(responseData.data || "Signup successful!");
-      } else {
-        alert(`Error: ${responseData.data}`);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to sign up. Please try again. Error details: ' + error.message);
-    }
+    setmsg(null);
+    signup();
   };
+  
+
+  useEffect(() => {
+    if (status === 201) {
+      dispatch({ type: "SET_USER", payload: data })
+      navigate('/forgot-password')
+      
+    } else if (status && status !== 200) {
+      setmsg(`${error}`);
+    }
+    if (error) {
+      setmsg(`${error}`);
+    }
+  
+  }, [data])
   
  
   
   return (
     <form id='signUpFormStyle' onSubmit={handleSubmit}>
+
+
       <div id='formContainer'>
+        <div style={{display : "flex",
+          flexDirection : "row",
+          justifyContent : "space-between"
+        }}>
+
+
+
+
         <div id='inputContainer'>
           <label>Full Name</label>
           <FaUser className="inputIcon" />
@@ -84,6 +106,13 @@ const Signup = () => {
             required
           />
         </div>
+
+        </div>
+
+        <div style={{display : "flex",
+          flexDirection : "row",
+          justifyContent : "space-between"
+        }}>
 
         <div id='inputContainer'>
           <label>Username</label>
@@ -114,6 +143,11 @@ const Signup = () => {
             required
           />
         </div>
+        </div>
+
+
+        
+
 
         <div id='inputContainer'>
           <label>Password</label>
@@ -150,7 +184,17 @@ const Signup = () => {
         </div>
 
         <input type='submit' value='Sign Up' id='submit1' />
+    
       </div>
+    <Spinner isLoading={isLoading}/>
+      <div id="ErrorMsgContainer">
+      {msg &&
+
+        <h3 id='errorMsg' >{msg}</h3>
+                        } 
+      </div>
+
+
     </form>
   );
 }
