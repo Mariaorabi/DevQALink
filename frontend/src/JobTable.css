@@ -58,3 +58,19 @@ tr:hover {
     text-align: center;
     margin: 20px 0; /* Margin for spacing */
 }
+
+/* Add styles for test rows based on the result */
+.test-pass {
+    background-color: #2ec050; /* Light green */
+    color: #155724; /* Dark green text */
+}
+
+.test-fail {
+    background-color: #e12434; /* Light red */
+    color: #d20d21; /* Dark red text */
+}
+
+.test-pending {
+    background-color: #fff3cd; /* Light orange */
+    color: #856404; /* Dark orange text */
+}
