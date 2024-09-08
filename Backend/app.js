@@ -6,7 +6,7 @@ var upload = multer();
 const mongoose = require('mongoose');
 
 // MongoDB connection URI (Corrected)
-const mongoURI = 'mongodb://localhost:27017/executionDB'; // Correct URI with the '/'
+const mongoURI = 'mongodb://localhost:27017/executionDB'; 
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
