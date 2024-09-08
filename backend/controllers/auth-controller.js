@@ -96,7 +96,7 @@ const getUser = async (req, res) => {
     }
 
     // Check if 24 hours have passed and reset the values if needed
-    await checkIf24HoursPassed(loginUser);
+    // await checkIf24HoursPassed(loginUser);
 
     // Check if the account is locked
     const lockCheck = await checkIfLocked(loginUser);
@@ -108,7 +108,8 @@ const getUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       // Increment the 'tries' field on a failed login attempt
-      loginUser.tries += 1;
+      loginUser.tries++;
+      console.log(loginUser.tries)
 
       // Check if the number of tries has reached the limit
       if (loginUser.tries >= 5) {
@@ -116,7 +117,7 @@ const getUser = async (req, res) => {
         loginUser.lockTime = new Date();
         await loginUser.save();
         return res.status(403).json({
-          message: `Account locked due to too many failed login attempts. Locked at: ${loginUser.lockTime}`,
+          message: `Account locked due to too many failed login attempts. Locked at: ${loginUser.lockTime.toLocaleTimeString()}}`,
         });
       }
 
@@ -153,18 +154,18 @@ const getUser = async (req, res) => {
 
 
 // Function to check if 24 hours have passed since the document was created
-const checkIf24HoursPassed = async (loginUser) => {
-  const now = new Date();
-  const resetDuration = 5* 60 * 1000; // 24 hours in milliseconds
+// const checkIf24HoursPassed = async (loginUser) => {
+//   const now = new Date();
+//   const resetDuration = 5* 60 * 1000; // 24 hours in milliseconds
 
-  if (now - loginUser.createdAt > resetDuration) {
-    // Reset the login attempts and unlock the account
-    loginUser.tries = 0;
-    loginUser.isLocked = false;
-    loginUser.lockTime = null;
-    await loginUser.save();
-  }
-};
+//   if (now - loginUser.createdAt > resetDuration) {
+//     // Reset the login attempts and unlock the account
+//     loginUser.tries = 0;
+//     loginUser.isLocked = false;
+//     loginUser.lockTime = null;
+//     await loginUser.save();
+//   }
+// };
 
 
 // Function to check if the account is locked due to too many failed attempts
@@ -185,7 +186,7 @@ const checkIfLocked = async (loginUser) => {
       // Account is still locked
       return {
         isLocked: true,
-        message: `Account locked due to too many failed login attempts. Please try again after 30 seconds. Locked at: ${loginUser.lockTime}`,
+        message: `Account locked due to too many failed login attempts. Please try again after 30 seconds. Locked at: ${loginUser.lockTime.toLocaleTimeString()}`,
       };
     }
   }
