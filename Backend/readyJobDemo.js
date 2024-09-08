@@ -56,14 +56,11 @@ createDemoReadyJob();
 
   
 
- /*
+ 
 async function startjob() {
   try{
     await connectDB();
-    const job = await Job.findOne({ status: 'ready' }).sort({ date: 1 });
-    if(job)
-    await jobController.processJob(job);
-   job = await Job.findOne({ status: 'ready' }).sort({ date: 1 });
+    const job = await Job.findOne({ status: 'Ready' }).sort({ date: 1 });
     if(job)
     await jobController.processJob(job);
   }catch(error){
@@ -83,10 +80,11 @@ startjob();
 async function start2jobspararell(){
     try {
       await connectDB();
+
   
       // Find two jobs that are ready
-      const jobs = await Job.find({ status: 'ready' }).sort({ date: 1 }).limit(2);
-  
+      const jobs = await Job.find({ status: 'Ready' }).sort({ date: 1 }).limit(2);
+      console.log(jobs);
       if (jobs.length > 0) {
         // Process all jobs in parallel
         await Promise.all(jobs.map(job => jobController.processJob(job)));

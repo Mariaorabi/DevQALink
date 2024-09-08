@@ -16,18 +16,22 @@ async function processJob(readyJob) {
     }
 
     try {
-        const pool = await Pool.findById(readyJob.pool);
+        //const pool = await Pool.findById(readyJob.pool);
+
+        const pool = await Pool.findOne({ name: new RegExp(`^${readyJob.resourcePool}$`, 'i') });
         if (!pool) {
             console.error('Error: Pool not found for readyJob');
             return;
         }
+        
 
         const cluster = await Cluster.findOne({ _id: { $in: pool.clusters }, status: 'available' });
+
         if (!cluster) {
             await handleReadyQueue(readyJob);
         } else {
             console.log("before alloc resources");
-            const {job,readyJobCopy} = await allocateResources(cluster, readyJob);
+            const {job,readyJobCopy} = await allocateResources(cluster, readyJob, pool._id);
             await runJob(job);
             await deallocateResources(cluster, job, readyJobCopy, pool);
         }
@@ -36,14 +40,14 @@ async function processJob(readyJob) {
     }
 }
 
-async function allocateResources(cluster, readyJob) {
+async function allocateResources(cluster, readyJob, poolId) {
     console.log("in allocate res", cluster, readyJob);
     try {
         cluster.status = 'running';
         await cluster.save();
 
         console.log("Calling allocatePhase3Job..."); 
-        const job = await allocatePhase3Job(readyJob,cluster); 
+        const job = await allocatePhase3Job(readyJob,cluster,poolId); 
         console.log("Job returned from allocatePhase3Job:", job); 
 
         await job.save(); 
@@ -66,19 +70,19 @@ async function allocateResources(cluster, readyJob) {
     }
 }
 
-async function allocatePhase3Job(readyJob,cluster){
+async function allocatePhase3Job(readyJob,cluster,poolId){
     try {
         console.log("in allocate phase 3", readyJob);
         const job = new phase3Job({
-            name: readyJob.name,
-            tests: readyJob.tests,
-            version: readyJob.version,
+            name: readyJob.jobName,
+            tests: readyJob.testsToRun,
+            version: readyJob.buildVersion,
             status: 'running',
             cluster: cluster,  
-            pool: readyJob.pool, 
-            schedType: readyJob.schedType,
-            estimatedRunTime: readyJob.estimatedRunTime,
-            date: readyJob.date,
+            pool: poolId, 
+            schedType: readyJob.scheduleType,
+            estimatedRunTime: readyJob.estimatedTime,
+            date: readyJob.createdDate,
             triggeredBy: readyJob.triggeredBy,
             startTime: Date.now(),
             endTime: null,
@@ -167,7 +171,7 @@ async function handlCurrentJob(cluster,readyJobCopy){
 
     console.log("readyJobCopy in handlCurrentJob:", readyJobCopy);
     
-    if(readyJobCopy.schedType ==='reoccurring'){
+    if(readyJobCopy.scheduleType ==='Reoccurring Job'){
         readyJobCopy.status = 'waiting';
         jobsHandler(readyJobCopy); /// function from scheduling team 
     }
