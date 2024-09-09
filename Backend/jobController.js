@@ -98,30 +98,62 @@ async function allocatePhase3Job(readyJob,cluster,poolId){
     
 }
 
+
 async function runJob(runJob) {
     console.log(`Starting job: ${runJob.name}`);
-    console.log(`Starting time: ${new Date()}`);
-    //add start run time 
-    // expected
-    // overall run > 1.5 * expected stop the loop and mark the test as fail + "time out exceeded
+    const startTime = new Date();
+    console.log(`Starting time: ${startTime}`);
+    
+    const expectedRuntimeMs = parseEstimatedRunTime(runJob.estimatedRunTime || "0h 0m");
+    const maxRuntime = 1.5 * expectedRuntimeMs; // 1.5 times the expected runtime
 
     // Simulate the running process for each test
-
     for (let i = 0; i < runJob.tests.length; i++) {
         const test = runJob.tests[i];
         
         console.log(`Running test ${i + 1}/${runJob.tests.length}: ${test}`);
-        
+
+        // Check if overall run time has exceeded the max runtime
+        const currentTime = new Date();
+        const elapsedTime = currentTime - startTime;
+        if (elapsedTime > maxRuntime) {
+            console.log(`Test ${i + 1} timed out: Total run time exceeded allowed time.`);
+            runJob.testResults.push(`Test ${i + 1} result: Failure (Time Out Exceeded)`);
+            await runJob.save();
+            continue; 
+        }
+
         // Simulate the time taken by this test
         await simulateTestRun();
 
-        // Simulate setting the test result
-        runJob.testResults.push(`Test ${i + 1} result: Success`); // You can randomize or vary this result
-        console.log(`Completed test ${i + 1}: ${test}`);
+        // Randomize test result (Success or Failure)
+        const testResult = Math.random() > 0.5 ? 'Success' : 'Failure';
+        runJob.testResults.push(`${testResult}`);
+        await runJob.save();
+        console.log(`Completed test ${i + 1}: ${test} - Result: ${testResult}`);
     }
 
+    const endTime = new Date();
     console.log(`Job ${runJob.name} completed.`);
+    console.log(`Total run time: ${(endTime - startTime) / 1000} seconds`);
 }
+
+function parseEstimatedRunTime(estimatedRunTime) {
+    const timeRegex = /(\d+)h\s*(\d+)m/;
+    const match = estimatedRunTime.match(timeRegex);
+    if (!match) {
+        throw new Error('Invalid estimatedRunTime format');
+    }
+
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    
+    // Convert the hours and minutes to milliseconds
+    const totalMilliseconds = (hours * 60 * 60 * 1000) + (minutes * 60 * 1000);
+    
+    return totalMilliseconds;
+}
+
 
 function simulateTestRun() {
     return new Promise((resolve) => {
