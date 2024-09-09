@@ -233,23 +233,27 @@ const deleteUser = async (req, res) => {
 };
 
 // פונקציה לשליחת מייל לשחזור סיסמה
-
-
 const sendPasswordResetEmail = async (email, token) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',  // 'Gmail' לא מתוארת ב-nodemailer, השתמש ב-'gmail'
     auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-app-password'  // השתמש בסיסמת אפליקציה אם יש לך אימות דו-שלבי
+      user: 'tasbih.ab274@gmail.com',
+      pass: 'ajet ovda likn gxuk'  // השתמש בסיסמת אפליקציה אם יש לך אימות דו-שלבי
     }
   });
-
   const mailOptions = {
-    from: 'your-email@gmail.com',
-    to: email,
+    from: 'tasbih.ab274@gmail.com',
+
+    ///?? 
+    to:email ,
     subject: 'Password Reset',
     text: `You requested a password reset. Use the following code to reset your password: ${token}`
+
+
   };
+  console.log(`Sending email to: ${mailOptions.to}`);
+  console.log(`From email: ${mailOptions.from}`);
+  
 
   try {
     await transporter.sendMail(mailOptions);
