@@ -9,7 +9,7 @@ const Phase3Job = new Schema({
   cluster: { type: Schema.Types.ObjectId, ref: 'Cluster', default: null },  
   pool: { type: Schema.Types.ObjectId, ref: 'Pool', default: null }, 
   schedType: { type: String, required: true },
-  estimatedRunTime: { type: Number, required: true },
+  estimatedRunTime: { type: String, required: true },
   date: { type: Date, default: Date.now },
   triggeredBy:{ type: String, required: true },
   startTime: { type: Date, required: true },

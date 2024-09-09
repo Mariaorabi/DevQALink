@@ -3,10 +3,12 @@ require('dotenv').config(); // Load environment variables
 const mongoose = require('mongoose');
 const connectDB = require('./config/database');
 
-const Job = require('./models/job');
+const Job = require('./models/readyJobsModel');
 const Cluster = require('./models/cluster');
 const Pool = require('./models/pool');
 const phase3Job = require('./models/phase3Job');
+const WaitingJob = require('./models/waitingJobsModel');
+
 
 // a ready job calls thing function
 async function processJob(readyJob) {
@@ -16,18 +18,22 @@ async function processJob(readyJob) {
     }
 
     try {
-        const pool = await Pool.findById(readyJob.pool);
+        //const pool = await Pool.findById(readyJob.pool);
+
+        const pool = await Pool.findOne({ name: new RegExp(`^${readyJob.resourcePool}$`, 'i') });
         if (!pool) {
             console.error('Error: Pool not found for readyJob');
             return;
         }
+        
 
         const cluster = await Cluster.findOne({ _id: { $in: pool.clusters }, status: 'available' });
+
         if (!cluster) {
             await handleReadyQueue(readyJob);
         } else {
             console.log("before alloc resources");
-            const {job,readyJobCopy} = await allocateResources(cluster, readyJob);
+            const {job,readyJobCopy} = await allocateResources(cluster, readyJob, pool._id);
             await runJob(job);
             await deallocateResources(cluster, job, readyJobCopy, pool);
         }
@@ -36,14 +42,14 @@ async function processJob(readyJob) {
     }
 }
 
-async function allocateResources(cluster, readyJob) {
+async function allocateResources(cluster, readyJob, poolId) {
     console.log("in allocate res", cluster, readyJob);
     try {
         cluster.status = 'running';
         await cluster.save();
 
         console.log("Calling allocatePhase3Job..."); 
-        const job = await allocatePhase3Job(readyJob,cluster); 
+        const job = await allocatePhase3Job(readyJob,cluster,poolId); 
         console.log("Job returned from allocatePhase3Job:", job); 
 
         await job.save(); 
@@ -51,7 +57,6 @@ async function allocateResources(cluster, readyJob) {
 
         // Create a deep copy of readyJob before removal
         const readyJobCopy = JSON.parse(JSON.stringify(readyJob));
-
         console.log("readyJob before removal:", readyJob);
         if (readyJob.remove) {
             await readyJob.remove(); // If remove is available, use it
@@ -66,19 +71,19 @@ async function allocateResources(cluster, readyJob) {
     }
 }
 
-async function allocatePhase3Job(readyJob,cluster){
+async function allocatePhase3Job(readyJob,cluster,poolId){
     try {
         console.log("in allocate phase 3", readyJob);
         const job = new phase3Job({
-            name: readyJob.name,
-            tests: readyJob.tests,
-            version: readyJob.version,
+            name: readyJob.jobName,
+            tests: readyJob.testsToRun,
+            version: readyJob.buildVersion,
             status: 'running',
             cluster: cluster,  
-            pool: readyJob.pool, 
-            schedType: readyJob.schedType,
-            estimatedRunTime: readyJob.estimatedRunTime,
-            date: readyJob.date,
+            pool: poolId, 
+            schedType: readyJob.scheduleType,
+            estimatedRunTime: readyJob.estimatedTime,
+            date: readyJob.createdDate,
             triggeredBy: readyJob.triggeredBy,
             startTime: Date.now(),
             endTime: null,
@@ -121,7 +126,7 @@ async function runJob(runJob) {
 function simulateTestRun() {
     return new Promise((resolve) => {
         // Simulate a test running for 1-3 seconds
-        const time = Math.floor(Math.random() * 3000) + 1000;
+        const time = Math.floor(Math.random() * 10000) + 1000;
         setTimeout(() => {
             console.log(`Simulated test ran for ${time}ms`);
             resolve();
@@ -167,17 +172,32 @@ async function handlCurrentJob(cluster,readyJobCopy){
 
     console.log("readyJobCopy in handlCurrentJob:", readyJobCopy);
     
-    if(readyJobCopy.schedType ==='reoccurring'){
-        readyJobCopy.status = 'waiting';
-        jobsHandler(readyJobCopy); /// function from scheduling team 
+    if(readyJobCopy.scheduleType ==='Reoccurring Job'){
+        //readyJobCopy.status = 'Waiting';
+        await jobsHandler(readyJobCopy); /// function from scheduling team 
     }
 }
 
 
 async function jobsHandler(readyJobCopy) {
-    // Save the readyJobCopy back to the database
-    const newJob = new Job(readyJobCopy);
-    await newJob.save();
+    // Save the readyJobCopy as new waiting job back to the database
+    const newWaitingJob = new WaitingJob({
+        jobName: readyJobCopy.jobName,
+        testsToRun: readyJobCopy.testsToRun,
+        resourcePool: readyJobCopy.resourcePool,
+        buildVersion: readyJobCopy.buildVersion,
+        jobRunType: readyJobCopy.jobRunType,
+        scheduleType: readyJobCopy.scheduleType,
+        scheduleTime: readyJobCopy.scheduleTime,
+        priorityLevel: readyJobCopy.priorityLevel,
+        estimatedTime: readyJobCopy.estimatedTime,
+        createdDate: readyJobCopy.createdDate,
+        createdTime: readyJobCopy.createdTime,
+        status: 'Waiting',
+        activationStatus: readyJobCopy.activationStatus
+    }); 
+
+    await newWaitingJob.save();
 }
 
 async function deallocateCluster(cluster,pool){
@@ -188,18 +208,25 @@ async function deallocateCluster(cluster,pool){
 
     // find job from readyJobs that is waiting for an available cluster
     // assume that ready jobs are order as well
-    await handleNextJob(pool._id);
+    await handleNextJob(pool.name);
 }
 
-async function handleNextJob(poolId){
-    nextJob = await getJobByPoolAndStatus(poolId);
+async function handleNextJob(poolName){
+    console.log('in handle next job');
+    nextJob = await getJobByPoolAndStatus(poolName);
     await processJob(nextJob);
 }
 
-const getJobByPoolAndStatus = async (poolId) => {
+const getJobByPoolAndStatus = async (poolName) => {
     try {
-      const job = await Job.findOne({ pool: poolId, status: 'ready' }).exec();
-      return job;
+      //const readyJobs = await Job.find().sort({ resourcePool: poolName, priorityLevel: -1 });
+      
+      const jobs = await Job.find({ resourcePool: poolName, status: 'Ready' }).exec();
+      console.log( "getJobByPoolAndStatus before sort" + jobs);
+      const readyJobs = jobs.sort((a, b) => b.priorityLevel - a.priorityLevel);
+      console.log( "getJobByPoolAndStatus after sort" + readyJobs);
+      //console.log('next job' + job);
+      return readyJobs.length>0 ?  readyJobs[0] : null;
     } catch (error) {
       console.error('Error fetching job:', error);
       throw error;

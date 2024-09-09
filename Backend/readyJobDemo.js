@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Job = require('./models/job');
+const Job = require('./models/readyJobsModel');
 const jobController = require('./jobController');
 const mongoose = require('mongoose');
 const connectDB = require('./config/database');
@@ -56,14 +56,12 @@ createDemoReadyJob();
 
   
 
- /*
+ */
 async function startjob() {
   try{
     await connectDB();
-    const job = await Job.findOne({ status: 'ready' }).sort({ date: 1 });
-    if(job)
-    await jobController.processJob(job);
-   job = await Job.findOne({ status: 'ready' }).sort({ date: 1 });
+    const job = await Job.findOne({ status: 'Ready' }).sort({ date: 1 });
+    console.log(job);
     if(job)
     await jobController.processJob(job);
   }catch(error){
@@ -77,16 +75,17 @@ async function startjob() {
 
 startjob();
 
-*/
 
 
+/*
 async function start2jobspararell(){
     try {
       await connectDB();
+
   
       // Find two jobs that are ready
-      const jobs = await Job.find({ status: 'ready' }).sort({ date: 1 }).limit(2);
-  
+      const jobs = await Job.find({ status: 'Ready' }).sort({ date: 1 }).limit(2);
+      console.log(jobs);
       if (jobs.length > 0) {
         // Process all jobs in parallel
         await Promise.all(jobs.map(job => jobController.processJob(job)));
@@ -98,4 +97,4 @@ async function start2jobspararell(){
     }
   }
 
-  start2jobspararell();
+  start2jobspararell();*/
