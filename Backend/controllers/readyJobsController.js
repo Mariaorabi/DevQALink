@@ -1,11 +1,10 @@
 const ReadyJob = require('../models/readyJobsModel');
 const moment = require('moment-timezone');
-const runJob = require('../jobController');
 
 // Handle POST request to add a new ready job
 exports.addReadyJob = async (req, res) => {
     try {
-        const {jobId, jobName, testsToRun, resourcePool, buildVersion, jobRunType, scheduleType, createdDate, createdTime, scheduleTime, priorityLevel, activationStatus, estimatedTime } = req.body;
+        const {jobId, jobName, testsToRun, resourcePool, buildVersion, jobRunType, scheduleType, createdDate, createdTime, scheduleTime, priorityLevel, activationStatus, estimatedTime, resumeJob } = req.body;
 
         const newJob = new ReadyJob({
             jobId,
@@ -22,7 +21,7 @@ exports.addReadyJob = async (req, res) => {
             createdTime,
             activationStatus,
             jobStatus: 'Ready',
-            triggeredBy: "example",
+            resumeJob
         });
         
         const savedJob = await newJob.save();
@@ -31,10 +30,6 @@ exports.addReadyJob = async (req, res) => {
             message: 'Job added successfully',
             job: savedJob
         });
-
-        runJob.processJob(savedJob);
-
-
     } catch (error) {
         console.error('Error saving ready job:', error);
         res.status(500).json({
@@ -43,44 +38,6 @@ exports.addReadyJob = async (req, res) => {
         });
     }
 };
-
-// exports.addReadyJobFromWaiting = async (req, res) => {
-
-//     try {
-//         const {jobId, jobName, testsToRun, resourcePool, buildVersion, jobRunType, scheduleType, scheduleTime, priorityLevel, estimatedTime, activationStatus } = req.body;
-
-//         const newJob = new ReadyJob({
-//             jobId,
-//             jobName,
-//             testsToRun,
-//             resourcePool,
-//             buildVersion,
-//             jobRunType,
-//             scheduleType,
-//             scheduleTime,
-//             priorityLevel,
-//             estimatedTime,
-//             createdDate,
-//             createdTime,
-//             jobStatus: 'Ready',
-//             activationStatus
-//         });
-
-//         const savedJob = await newJob.save();
-
-//         res.status(201).json({
-//             message: 'Job added successfully',
-//             job: savedJob
-//         });
-//     } catch (error) {
-//         console.error('Error saving ready job:', error);
-//         res.status(500).json({
-//             message: 'Error saving ready job',
-//             error: error.message
-//         });
-//     }
-// };
-
 
 exports.deleteJobById = async (req, res) => {
     try {
@@ -126,7 +83,8 @@ exports.updateJobById = async (req, res) => {
             createdDate,
             createdTime,
             estimatedTime,
-            activationStatus
+            activationStatus,
+            resumeJob
         } = req.body;
 
         console.log("req body is: ", req.body); // Log entire request body
@@ -143,6 +101,7 @@ exports.updateJobById = async (req, res) => {
         console.log("createdTime: ", createdTime);
         console.log("estimatedTime: ", estimatedTime);
         console.log("activationStatus: ", activationStatus);
+        console.log("resumeJob: ", resumeJob);
 
 
         // Create an object for fields that should be updated
@@ -163,6 +122,7 @@ exports.updateJobById = async (req, res) => {
         if (createdTime !== undefined) updateFields.createdTime = createdTime;
         if (estimatedTime !== undefined) updateFields.estimatedTime = estimatedTime;
         if (activationStatus !== undefined) updateFields.activationStatus = activationStatus
+        if (resumeJob !== undefined) updateFields.resumeJob = resumeJob;
 
         // Update the created date and time for tracking purposes
         // const nowInJerusalem = moment().tz('Asia/Jerusalem');
