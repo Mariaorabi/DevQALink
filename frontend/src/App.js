@@ -49,7 +49,7 @@ import Dashboards from './pages/Dashboards';
 import Help from './pages/Help';
 import Requests from './pages/Requests';
 import Jobs from './pages/Jobs/Jobs'; // Points to the Jobs component
-import Running from './pages/Running'; // Running jobs page
+import Running from './pages/Running/RunningJobTable'; // Running jobs page
 import Completed from './pages/Completed'; // Completed jobs page
 import Portfolios from './pages/Portfolios';
 import Programs from './pages/Programs';
@@ -77,6 +77,13 @@ const App = () => {
         </Router>
     );
 }
+
+/** return (
+        <div className="App">
+            <h1>Job Management System</h1>
+            <JobTable />
+        </div>
+    ); */
 
 export default App;
 
