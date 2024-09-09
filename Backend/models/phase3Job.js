@@ -7,7 +7,7 @@ const Phase3Job = new Schema({
   version: { type: String, required: true },
   status: { type: String, required: true },
   cluster: { type: Schema.Types.ObjectId, ref: 'Cluster', default: null },  
-  pool: { type: Schema.Types.ObjectId, ref: 'Pool', default: null }, 
+  pool: { type: String }, 
   schedType: { type: String, required: true },
   estimatedRunTime: { type: String, required: true },
   date: { type: Date, default: Date.now },
@@ -16,6 +16,7 @@ const Phase3Job = new Schema({
   endTime: { type: Date },
   runtimeDuration: { type: String},
   testResults:[{ type: String }],
+  jobId:{ type: Number}
 });
 
 module.exports = mongoose.model('phase3Job', Phase3Job);

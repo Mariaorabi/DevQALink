@@ -178,7 +178,7 @@ export default function JobTable() {
             const filteredData = data
                 .filter(job => job.status === 'running')
                 .map(job => createData(
-                    job._id,
+                    job.jobId,
                     job.name,
                     job.version,
                     job.status,

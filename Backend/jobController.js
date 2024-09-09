@@ -33,7 +33,7 @@ async function processJob(readyJob) {
             await handleReadyQueue(readyJob);
         } else {
             console.log("before alloc resources");
-            const {job,readyJobCopy} = await allocateResources(cluster, readyJob, pool._id);
+            const {job,readyJobCopy} = await allocateResources(cluster, readyJob, pool.id,pool.name);
             await runJob(job);
             await deallocateResources(cluster, job, readyJobCopy, pool);
         }
@@ -42,14 +42,14 @@ async function processJob(readyJob) {
     }
 }
 
-async function allocateResources(cluster, readyJob, poolId) {
+async function allocateResources(cluster, readyJob, poolId,poolName) {
     console.log("in allocate res", cluster, readyJob);
     try {
         cluster.status = 'running';
         await cluster.save();
 
         console.log("Calling allocatePhase3Job..."); 
-        const job = await allocatePhase3Job(readyJob,cluster,poolId); 
+        const job = await allocatePhase3Job(readyJob,cluster,poolId,poolName); 
         console.log("Job returned from allocatePhase3Job:", job); 
 
         await job.save(); 
@@ -71,7 +71,7 @@ async function allocateResources(cluster, readyJob, poolId) {
     }
 }
 
-async function allocatePhase3Job(readyJob,cluster,poolId){
+async function allocatePhase3Job(readyJob,cluster,poolId,poolName){
     try {
         console.log("in allocate phase 3", readyJob);
         const job = new phase3Job({
@@ -80,7 +80,7 @@ async function allocatePhase3Job(readyJob,cluster,poolId){
             version: readyJob.buildVersion,
             status: 'running',
             cluster: cluster,  
-            pool: poolId, 
+            pool: poolName, 
             schedType: readyJob.scheduleType,
             estimatedRunTime: readyJob.estimatedTime,
             date: readyJob.createdDate,
@@ -88,6 +88,7 @@ async function allocatePhase3Job(readyJob,cluster,poolId){
             startTime: Date.now(),
             endTime: null,
             runtimeDuration: 0,
+            jobId: readyJob.jobId
         });
 
         console.log("Job created in allocatePhase3Job:", job); 
