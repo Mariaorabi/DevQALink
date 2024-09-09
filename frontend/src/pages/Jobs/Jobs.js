@@ -223,19 +223,6 @@ const Jobs = () => {
         setDeletingJob(null);
     };
 
-    // const formatTestsToRun = (tests) => {
-    //     if (!tests || !Array.isArray(tests) || tests.length === 0) return '-';
-    
-    //     let formattedTests = '';
-    //     for (let i = 0; i < tests.length; i += 2) {
-    //         const pair = tests.slice(i, i + 2);
-    //         console.log('pair:', pair);
-    //         formattedTests += pair.join(', ') + ', ';
-    //     }
-    
-    //     return formattedTests.slice(0, -2); // Remove trailing comma and space
-    // };
-
     const formatTestsToRun = (tests) => {
         // Check if tests is an array and is not empty
         if (!tests || !Array.isArray(tests) || tests.length === 0) return '-';

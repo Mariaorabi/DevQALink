@@ -216,7 +216,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="testsToRun" 
                             value={formData.testsToRun} 
                             onChange={handleChange} 
-                            required 
+                            disabled
                         />
                     </div>
 
@@ -227,7 +227,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="resourcePool" 
                             value={formData.resourcePool} 
                             onChange={handleChange} 
-                            required
+                            disabled
                         >
                             <option value="" disabled>Select a pool</option>
                             {poolNames.map(pool => (
@@ -244,7 +244,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="buildVersion" 
                             value={formData.buildVersion} 
                             onChange={handleChange} 
-                            required 
+                            disabled 
                         />
                     </div>
 
@@ -255,7 +255,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="jobRunType" 
                             value={formData.jobRunType} 
                             onChange={handleChange} 
-                            required
+                            disabled
                         >
                             <option value="Immediately">Immediately</option>
                             <option value="Scheduled">Scheduled</option>
@@ -271,7 +271,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                     name="scheduleType"
                                     value={formData.scheduleType}
                                     onChange={handleChange}
-                                    required
+                                    disabled
                                 >
                                     <option value="One-Time Job">One-Time Job</option>
                                     <option value="Reoccurring Job">Reoccurring Job</option>
@@ -303,7 +303,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                     name="scheduleTime"
                                     value={formData.scheduleTime}
                                     onChange={handleChange}
-                                    required
+                                    disabled
                                 />
                             </div>
                         </>
@@ -329,7 +329,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                 name="estimatedHours"
                                 value={formData.estimatedHours}
                                 onChange={handleChange}
-                                required
+                                disabled
                             >
                                 {generateOptions(0, 48)}
                             </select>
@@ -338,7 +338,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                 name="estimatedMinutes"
                                 value={formData.estimatedMinutes}
                                 onChange={handleChange}
-                                required
+                                disabled
                             >
                                 {generateOptions(0, 59)}
                             </select>
