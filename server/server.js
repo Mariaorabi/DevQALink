@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const waitingJobsRoutes = require('./routes/waitingJobs');
 const readyJobsRoutes = require('./routes/readyJobs');
 const poolsRoutes = require('./routes/pools'); // Include the pools routes
+const runningJobRoutes = require('./router/runningJob-router.js');
 
 var app = express();
 var bodyParser = require('body-parser');
@@ -37,6 +38,7 @@ mongoose.connect('mongodb://localhost:27017/Jobs', { useNewUrlParser: true, useU
 app.use('/jobs/waitingJobs', waitingJobsRoutes);
 app.use('/jobs/readyJobs', readyJobsRoutes);
 app.use('/pools', poolsRoutes); // Use the pools routes
+app.use('/jobs/runningJobs',runningJobRoutes);
 
 // Start the server
 app.listen(PORT, () => {

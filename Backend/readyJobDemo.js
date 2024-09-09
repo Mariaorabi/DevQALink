@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Job = require('./models/job');
+const Job = require('./models/readyJobsModel');
 const jobController = require('./jobController');
 const mongoose = require('mongoose');
 const connectDB = require('./config/database');
@@ -56,11 +56,12 @@ createDemoReadyJob();
 
   
 
- 
+ */
 async function startjob() {
   try{
     await connectDB();
     const job = await Job.findOne({ status: 'Ready' }).sort({ date: 1 });
+    console.log(job);
     if(job)
     await jobController.processJob(job);
   }catch(error){
@@ -74,9 +75,9 @@ async function startjob() {
 
 startjob();
 
-*/
 
 
+/*
 async function start2jobspararell(){
     try {
       await connectDB();
@@ -96,4 +97,4 @@ async function start2jobspararell(){
     }
   }
 
-  start2jobspararell();
+  start2jobspararell();*/
