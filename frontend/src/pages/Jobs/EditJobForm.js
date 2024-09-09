@@ -188,6 +188,9 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
         }
         return options;
     };
+    
+    console.log('Job:', job.status);
+    const isReady = job.status === 'Ready';
 
     return (
         <div className="form-overlay">
@@ -215,8 +218,8 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             id="testsToRun" 
                             name="testsToRun" 
                             value={formData.testsToRun} 
-                            onChange={handleChange} 
-                            disabled
+                            onChange={handleChange}
+                            disabled={isReady}
                         />
                     </div>
 
@@ -227,7 +230,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="resourcePool" 
                             value={formData.resourcePool} 
                             onChange={handleChange} 
-                            disabled
+                            disabled={isReady}
                         >
                             <option value="" disabled>Select a pool</option>
                             {poolNames.map(pool => (
@@ -244,7 +247,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="buildVersion" 
                             value={formData.buildVersion} 
                             onChange={handleChange} 
-                            disabled 
+                            disabled={isReady} 
                         />
                     </div>
 
@@ -255,7 +258,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                             name="jobRunType" 
                             value={formData.jobRunType} 
                             onChange={handleChange} 
-                            disabled
+                            disabled={isReady}
                         >
                             <option value="Immediately">Immediately</option>
                             <option value="Scheduled">Scheduled</option>
@@ -271,7 +274,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                     name="scheduleType"
                                     value={formData.scheduleType}
                                     onChange={handleChange}
-                                    disabled
+                                    disabled={isReady}
                                 >
                                     <option value="One-Time Job">One-Time Job</option>
                                     <option value="Reoccurring Job">Reoccurring Job</option>
@@ -286,8 +289,8 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                         name="activationStatus"
                                         value={formData.activationStatus}
                                         onChange={handleChange}
-                                        disabled={isActivationStatusDisabled}
-                                        required
+                                        disabled={isReady}
+                    
                                     >
                                         <option value="Activated">Activated</option>
                                         <option value="Deactivated">Deactivated</option>
@@ -303,7 +306,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                     name="scheduleTime"
                                     value={formData.scheduleTime}
                                     onChange={handleChange}
-                                    disabled
+                                    disabled={isReady}
                                 />
                             </div>
                         </>
@@ -329,7 +332,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                 name="estimatedHours"
                                 value={formData.estimatedHours}
                                 onChange={handleChange}
-                                disabled
+                                disabled={isReady}
                             >
                                 {generateOptions(0, 48)}
                             </select>
@@ -338,7 +341,7 @@ const EditJobForm = ({ job, closeForm, saveJob }) => {
                                 name="estimatedMinutes"
                                 value={formData.estimatedMinutes}
                                 onChange={handleChange}
-                                disabled
+                                disabled={isReady}
                             >
                                 {generateOptions(0, 59)}
                             </select>
