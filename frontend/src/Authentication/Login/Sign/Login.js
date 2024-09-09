@@ -4,16 +4,21 @@ import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { Link, useNavigate } from 'react-router-dom';
 import useLoginHook from '../../Hooks/useLoginHook';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import '../LoginCss/Login.css';
 import Spinner from '../../../Components/Spinner';
-const Login = () => {
+import { getFaceIo } from '../../../Utility/Redux/Slices/FaceIoSlice';
+const Login = (props) => {
   const [input, setInput] = useState({});
   const { data, status, error,isLoading, login } = useLoginHook({ data: input });
   const [msg, setMsg] = useState(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const faceIo = useSelector(getFaceIo)
+  console.log(faceIo);
+
 
   const handleChange = (e) => {
     setMsg(null);
@@ -27,6 +32,21 @@ const Login = () => {
     e.preventDefault();
     setMsg(null)
     login(); 
+  };
+
+
+  const handleLogIn = async () => {
+    try {
+      let response = await faceIo.authenticate({
+        locale: "auto",
+      });
+
+      console.log(` Unique Facial ID: ${response.facialId}
+          PayLoad: ${response.payload}
+          `);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -72,7 +92,7 @@ const Login = () => {
           <p>or</p>
         </div>
 
-        <button id='faceRecognitionButton'>Login with Face Recognition</button>
+        <button id='faceRecognitionButton' onClick={handleLogIn}>Login with Face Recognition</button>
       </div>
       
 

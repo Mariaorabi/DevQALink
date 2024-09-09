@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-const getNextSequenceValue = require('../Utility/nextId');
 const Counter = require('./counter-models');
 
 // mongoose.connect('mongodb://localhost:27017/Customer');

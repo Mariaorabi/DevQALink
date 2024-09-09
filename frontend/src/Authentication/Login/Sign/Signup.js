@@ -6,6 +6,7 @@ import useSignupHook from "../../Hooks/useSignupHook";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../../Components/Spinner";
+import { login } from "../../../Utility/Redux/Slices/AuthSlice";
 
 const Signup = () => {
 
@@ -18,6 +19,9 @@ const Signup = () => {
   const dispatch = useDispatch();
   
   const navigate = useNavigate();
+
+
+  
   
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -31,6 +35,9 @@ const Signup = () => {
     phone: '',
     role: ''
   });
+  
+  
+  
   const {data,status,error,isLoading, signup} = useSignupHook({data:formData});
   
   const handleChange = (e) => {
@@ -52,8 +59,8 @@ const Signup = () => {
 
   useEffect(() => {
     if (status === 201) {
-      dispatch({ type: "SET_USER", payload: data })
-      navigate('/forgot-password')
+      dispatch(login(formData))
+      navigate('/faceRecognition')
       
     } else if (status && status !== 200) {
       setmsg(`${error}`);
@@ -168,6 +175,8 @@ const Signup = () => {
           </div>
         </div>
 
+
+
         <div id='inputContainer'>
           <label>Role</label>
           <select
@@ -184,6 +193,7 @@ const Signup = () => {
         </div>
 
         <input type='submit' value='Sign Up' id='submit1' />
+
     
       </div>
     <Spinner isLoading={isLoading}/>
