@@ -122,7 +122,7 @@ function Row(props) {
                                         <TableRow
                                             key={index}
                                             className={
-                                                row.tests[index].test_result === 'Pass'
+                                                row.tests[index].test_result === 'Success'
                                                     ? 'test-pass'
                                                     : row.tests[index].test_result === 'Fail'
                                                     ? 'test-fail'
@@ -147,7 +147,7 @@ function Row(props) {
                                             {/* Test Result */}
                                             <TableCell>
                                                 {row.tests[index].test_result
-                                                    ? row.tests[index].test_result === 'Pass'
+                                                    ? row.tests[index].test_result === 'Success'
                                                         ? 'Pass'
                                                         : 'Fail'
                                                     : 'Pending'}
@@ -164,46 +164,54 @@ function Row(props) {
     );
 }
 
-
 // Main JobTable component
 export default function JobTable() {
     const [rows, setRows] = useState([]);
 
+    // Function to fetch running jobs
+    const fetchJobs = async () => {
+        try {
+            const response = await fetch('http://localhost:3000/Jobs/getRunningJobs');
+            const data = await response.json();
+            
+            // Filter jobs with "running" status
+            const filteredData = data
+                .filter(job => job.status === 'running')
+                .map(job => createData(
+                    job._id,
+                    job.name,
+                    job.version,
+                    job.status,
+                    job.pool,
+                    job.schedType,
+                    job.estimatedRunTime,
+                    job.date,
+                    job.triggeredBy,
+                    job.startTime,
+                    job.tests.map((testName, idx) => ({
+                        name: testName,
+                        status: 'Running',
+                        test_result: job.testResults[idx] || '',
+                    }))
+                ));
+
+            setRows(filteredData);
+        } catch (error) {
+            console.error('Error fetching job data:', error);
+        }
+    };
+
     useEffect(() => {
-        const fetchJobs = async () => {
-            try {
-                const response = await fetch('http://localhost:3000/Jobs/getRunningJobs');
-                const data = await response.json();
-                
-                // Filter jobs with "running" status
-                const filteredData = data
-                    .filter(job => job.status === 'running')
-                    .map(job => createData(
-                        job._id,
-                        job.name,
-                        job.version,
-                        job.status,
-                        job.pool,
-                        job.schedType,
-                        job.estimatedRunTime,
-                        job.date,
-                        job.triggeredBy,
-                        job.startTime,
-                        job.tests.map((testName, idx) => ({
-                            name: testName,
-                            status: 'Running',
-                            test_result: job.testResults[idx] || '',
-                        }))
-                    ));
-
-                setRows(filteredData);
-            } catch (error) {
-                console.error('Error fetching job data:', error);
-            }
-        };
-
+        // Initial fetch
         fetchJobs();
-    }, []);
+
+        // Set up polling interval
+        const interval = setInterval(() => {
+            fetchJobs();
+        }, 5000); // Poll every 5 seconds
+
+        return () => clearInterval(interval);
+    }, []); // Empty dependency array to run only once on mount
 
     return (
         <StyledTableContainer component={Paper}>
