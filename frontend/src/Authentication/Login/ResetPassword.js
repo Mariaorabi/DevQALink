@@ -1,69 +1,86 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
- const ResetPassword = () => {
-  const [resetCode, setResetCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
+const ResetPassword = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    token: '',
+    newPassword: ''
+  });
+  const [statusMessage, setStatusMessage] = useState(null);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+    setFormData({...formData, [e.target.name]: e.target.value});
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     try {
-      const response = await fetch('localhost:3000/auth/reset-password', {
+      setStatusMessage("Resetting password...");
+
+      const response = await fetch('http://localhost:3000/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ resetCode, newPassword }),
+        body: JSON.stringify({
+          email: formData.email,
+          token: formData.token,
+          newPassword: formData.newPassword
+        }),
       });
 
+      const responseData = await response.json();
+
       if (response.ok) {
-        setMessage('Password has been reset successfully!');
-        // הפניה לעמוד ההתחברות
-        setTimeout(() => navigate('/'), 2000);
+        setStatusMessage("Password has been reset successfully!");
       } else {
-        setMessage('Failed to reset password. Please try again.');
+        setStatusMessage(`Error: ${responseData.data}`);
       }
     } catch (error) {
-      setMessage('An error occurred. Please try again later.');
+      console.error('Error:', error);
+      setStatusMessage('Failed to reset password. Please try again.');
     }
   };
 
   return (
-    <div id="resetPasswordFormStyle">
-      <form id='resetPasswordFormStyle' onSubmit={handleSubmit}>
-        <div id='formContainer'>
-          <h2>Reset Password</h2>
-          <div id='inputContainer'>
-            <label>Reset Code</label>
-            <input
-              type='text'
-              placeholder='Enter the reset code'
-              value={resetCode}
-              onChange={(e) => setResetCode(e.target.value)}
-              id='input'
-              required
-            />
-          </div>
-          <div id='inputContainer'>
-            <label>New Password</label>
-            <input
-              type='password'
-              placeholder='Enter your new password'
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              id='input'
-              required
-            />
-          </div>
-          <input type='submit' value='Reset Password' id='submit' />
-          {message && <p>{message}</p>}
+    <form id='resetPasswordForm' onSubmit={handleSubmit}>
+      <div id='formContainer'>
+        <h2>Reset Password</h2>
+
+        
+
+        <div id='inputContainer'>
+          <label>Reset Token</label>
+          <input 
+            type='text' 
+            placeholder='Enter the reset token' 
+            name='token'
+            value={formData.token}
+            onChange={handleChange}
+            required 
+          />
         </div>
-      </form>
-    </div>
+
+        <div id='inputContainer'>
+          <label>New Password</label>
+          <input 
+            type='password' 
+            placeholder='Enter your new password' 
+            name='newPassword'
+            value={formData.newPassword}
+            onChange={handleChange}
+            required 
+          />
+        </div>
+
+        <input type='submit' value='Reset Password' id='submit' />
+
+        {/* הצגת הודעת סטטוס */}
+        {statusMessage && <p>{statusMessage}</p>}
+      </div>
+    </form>
   );
-};
+}
 
 export default ResetPassword;

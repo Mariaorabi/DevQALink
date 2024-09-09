@@ -54,44 +54,6 @@ const postUser = async (req, res) => {
 
 
 
-// // Signup (Register) a new user
-// const postUser = async (req, res) => {
-//   try {
-//     const {fullName, username, password, email, phone, role } = req.body;
-
-//     // Check if all required fields are provided
-//     if ( !username || !password || !email || !phone || !role ) {
-//       return res.status(400).json({ data: 'All required fields must be provided', code: 400 });
-//     }
-//     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-
-//     // Create a new User instance with the provided data
-//     const newUser = new User({
-//       fullName,
-//       username,
-//       password: hashedPassword,
-//       email,
-//       phone,
-//       role,
-//     });
-
-//     // Save the user to the database
-//     const response = await newUser.save();
-
-//     // Send success response
-//     res.status(201).json({ data: 'User has been saved successfully', code: 201 });
-//   } catch (error) {
-//     console.error('Error saving user:', error);
-//     if (error.code === 11000) {
-//       // Handle duplicate key error (e.g., unique constraint on username or email)
-//       res.status(400).json({ data: 'Username or Email already exists', code: 400 });
-//     } else {
-//       // Handle other errors
-//       res.status(500).json({ data: 'An error occurred while saving the user', code: 500 });
-//     }
-//   }
-// };
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -159,10 +121,6 @@ const getUser = async (req, res) => {
 
 
 
-// const getOneStudent=async (req,res)=>{
-//     var response = await Student.findOne();
-//     res.json(response);
-// }
 
 const deleteUser = async (req, res) => {
 
@@ -208,23 +166,27 @@ const deleteUser = async (req, res) => {
 
 
 // פונקציה לשליחת מייל לשחזור סיסמה
-
-
 const sendPasswordResetEmail = async (email, token) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',  // 'Gmail' לא מתוארת ב-nodemailer, השתמש ב-'gmail'
     auth: {
-      user: 'your-email@gmail.com',
-      pass: 'your-app-password'  // השתמש בסיסמת אפליקציה אם יש לך אימות דו-שלבי
+      user: 'tasbih.ab274@gmail.com',
+      pass: 'ajet ovda likn gxuk'  // השתמש בסיסמת אפליקציה אם יש לך אימות דו-שלבי
     }
   });
-
   const mailOptions = {
-    from: 'your-email@gmail.com',
-    to: email,
+    from: 'tasbih.ab274@gmail.com',
+
+    ///?? 
+    to:email ,
     subject: 'Password Reset',
     text: `You requested a password reset. Use the following code to reset your password: ${token}`
+
+
   };
+  console.log(`Sending email to: ${mailOptions.to}`);
+  console.log(`From email: ${mailOptions.from}`);
+  
 
   try {
     await transporter.sendMail(mailOptions);
@@ -313,9 +275,6 @@ const resetPassword = async (req, res) => {
 exports.postUser = postUser;
 exports.getAllUsers = getAllUsers;
 exports.getUser = getUser;
-// exports.getnewStudent = getnewStudent;
-// exports.updateStudent = updateStudent;
-// exports.updatenewStudent = updatenewStudent;
 exports.deleteUser = deleteUser;
 exports.resetPassword = resetPassword ;
 exports.forgotPassword=forgotPassword;
