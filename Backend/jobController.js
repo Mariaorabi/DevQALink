@@ -219,9 +219,14 @@ async function handleNextJob(poolName){
 
 const getJobByPoolAndStatus = async (poolName) => {
     try {
-      const job = await Job.findOne({ resourcePool: poolName, status: 'Ready' }).exec();
-      console.log('next job' + job);
-      return job;
+      //const readyJobs = await Job.find().sort({ resourcePool: poolName, priorityLevel: -1 });
+      
+      const jobs = await Job.find({ resourcePool: poolName, status: 'Ready' }).exec();
+      console.log( "getJobByPoolAndStatus before sort" + jobs);
+      const readyJobs = jobs.sort((a, b) => b.priorityLevel - a.priorityLevel);
+      console.log( "getJobByPoolAndStatus after sort" + readyJobs);
+      //console.log('next job' + job);
+      return readyJobs.length>0 ?  readyJobs[0] : null;
     } catch (error) {
       console.error('Error fetching job:', error);
       throw error;
