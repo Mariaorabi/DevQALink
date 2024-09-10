@@ -1,0 +1,19 @@
+/* App.css */
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    background-image: url('https://wallpaperaccess.com/full/4172472.jpg'); /* Replace with your background URL */
+    background-size: cover; /* Cover the entire viewport */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    background-attachment: fixed; /* Make sure the background image stays fixed during scrolling */
+    min-height: 100vh; /* Ensure the body takes up at least the full viewport height */
+}
+
+h1 {
+    text-align: center;
+    color: rgb(255, 255, 255);
+    margin-top: 30px;
+    font-size: 80px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}

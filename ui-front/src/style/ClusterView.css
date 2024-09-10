@@ -1,0 +1,92 @@
+/* General Container */
+.cluster-view-container {
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8); /* Transparent background */
+    border-radius: 15px;
+    text-align: center;
+}
+
+/* Cluster Title */
+.cluster-view-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #333;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Cluster Description */
+.cluster-description {
+    font-size: 1.7rem;
+    margin-bottom: 40px;
+    color: #666;
+    animation: slideIn 0.5s ease-in-out;
+}
+
+/* Cluster Card Container */
+.cluster-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* Add space between the cards */
+}
+
+/* Cluster Card */
+.cluster-card {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: calc(25% - 40px); /* Adjusted to 25% width */
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    animation: fadeIn 1s ease-in-out;
+    flex-direction: column; /* Stack items vertically */
+}
+
+/* Hover Effects */
+.cluster-card:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+/* Card Text */
+.cluster-card p {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 0;
+}
+
+/* Keyframes for Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* General styling for the cluster card */
+.cluster-card {
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+/* Specific styling for different statuses */
+.active {
+    color: green;
+}
+
+.inactive {
+    color: red;
+}
+
+/* Add more styles for other statuses if needed */

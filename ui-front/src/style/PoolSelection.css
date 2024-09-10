@@ -1,0 +1,44 @@
+/* PoolSelection.css */
+.pool-selection-container {
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    align-items: center; /* Center the cards horizontally */
+    gap: 100px; /* Space between cards */
+    padding: 50px;
+}
+
+.pool-card {
+    cursor: pointer;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.3); /* Nearly transparent background */
+    border-radius: 10px;
+    padding: 20px;
+    width: 80%; /* Adjust width to make cards larger */
+    max-width: 600px; /* Maximum width for larger screens */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pool-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.pool-card img {
+    width: 100%;
+    height: 300px; /* Larger height for images */
+    object-fit: cover;
+    border-radius: 8px;
+    transition: opacity 0.3s ease;
+}
+
+.pool-card img:hover {
+    opacity: 0.9;
+}
+
+.pool-card p {
+    font-family: 'Georgia', serif;
+    margin-top: 15px;
+    font-size: 2em;
+    color: #333;
+}
