@@ -6,10 +6,12 @@ import Spinner from '../../../Components/Spinner'
 const Sign = () => {
 
   const [sign, setsign] = useState(false)
+  const [visble, setvisble] = useState(true)
   return (
+    visble &&
     <div id='login'>
      
-     <SignForm sign={sign} />
+     <SignForm sign={sign} setvisble={setvisble} />
 
       <AnimatedSide sign={sign} setsign={setsign}/>
 

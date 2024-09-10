@@ -25,7 +25,8 @@ const SignForm = (props) => {
 
 
 
-{props.sign ? <Signup /> : <Login />}
+
+ {props.sign ? <Signup  /> : <Login setVisble={props.setvisble}/>}
 
    
 

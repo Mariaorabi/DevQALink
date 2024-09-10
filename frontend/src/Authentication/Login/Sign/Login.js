@@ -13,10 +13,14 @@ const Login = (props) => {
   const { data, status, error,isLoading, login } = useLoginHook({ data: input });
   const [msg, setMsg] = useState(null);
 
+
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const faceIo = useSelector(getFaceIo)
+
+  const [FaceUser, setFaceUser] = useState(null)
+  let faceIo = useSelector(getFaceIo)
   console.log(faceIo);
 
 
@@ -36,22 +40,45 @@ const Login = (props) => {
 
 
   const handleLogIn = async () => {
+
+    props.setVisble(false)
     try {
       let response = await faceIo.authenticate({
         locale: "auto",
       });
-
+      
       console.log(` Unique Facial ID: ${response.facialId}
           PayLoad: ${response.payload}
           `);
-    } catch (error) {
-      console.log(error);
+
+          setFaceUser(response.payload);
+
+          
+          
+          setTimeout(async () => {
+            navigate('/forgot-password')
+          }, 2500); 
+        } catch (error) {
+
+          setTimeout(() => {
+             props.setVisble(true);
+              }, 2500);
+          console.log(error);
+        }
+    finally {
+      if(FaceUser !==null)
+        dispatch(login(FaceUser))
+      setTimeout(() => {
+        props.setVisble(true);
+      }, 2500); 
     }
-  };
+
+
+  };  
 
   useEffect(() => {
     if (status === 200) {
-      dispatch({ type: "SET_USER", payload: data })
+      dispatch(login(data));
       navigate('/forgot-password')
       
     } else if (status && status !== 200) {
@@ -69,11 +96,13 @@ const Login = (props) => {
     
     <form id='loginFormStyle' onSubmit={handleSubmit}>
       {/* <Spinner isLoading={true}/> */}
+
       <div id='LoginformContainer'>
         <div id='inputContainer'>
           <label>Username</label>
           <MdEmail className="inputIcon" />
           <input type='text' placeholder='Username' id='input' required name='username' onChange={handleChange} />
+      
         </div>
 
         <div id='inputContainer'>
@@ -100,12 +129,12 @@ const Login = (props) => {
       <Spinner isLoading={isLoading}/>
 
       {msg &&
-      <div id='ErrorMsgContainer'>
-            
-            <h3 id='errorMsg' >{msg}</h3> 
-
-      </div>
-              }
+        <div id='ErrorMsgContainer'>
+        
+        <h3 id='errorMsg' >{msg}</h3> 
+        
+        </div>
+      }
 
 
 

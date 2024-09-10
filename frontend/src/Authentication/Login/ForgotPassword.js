@@ -3,6 +3,8 @@ import { MdEmail } from "react-icons/md";
 import useForgotPasswordHook from '../Hooks/useForgotPasswordHook';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../../Components/Spinner';
+import { useSelector } from 'react-redux';
+import { getUser } from '../../Utility/Redux/Slices/AuthSlice';
 
 const ForgotPassword = () => {
 
@@ -11,6 +13,10 @@ const ForgotPassword = () => {
 
   const [formData, setFormData] = useState({
   });
+
+  const user = useSelector(getUser)
+
+  console.log(user)
 
 
   const {data,status,error,isLoading,forgotPassword} = useForgotPasswordHook({formData : formData});
