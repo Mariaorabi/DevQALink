@@ -417,5 +417,39 @@ margin-top: 5%;
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  100% { transform: rotate(360deg);
+   }
+  }
+#resetPasswordForm{
+
+  width: 800%;
+  max-width:500px;
+  margin: auto;
+  padding: 20px;
+ margin-top: 5%;
+  border-radius: 8px;
+  box-shadow: 10px 10px 5px 12px #26a0da;
+
+
+}
+
+#button{
+
+  height: 40px;
+  border-radius: 20px;
+  border-width: 0px;
+  cursor: pointer;
+  background-color: silver;
+  margin-top: 10px;
+font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+
+
+
+
+
+
+
+
+  
 }
