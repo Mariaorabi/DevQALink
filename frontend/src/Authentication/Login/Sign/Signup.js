@@ -6,7 +6,7 @@ import useSignupHook from "../../Hooks/useSignupHook";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Spinner from "../../../Components/Spinner";
-import { login } from "../../../Utility/Redux/Slices/AuthSlice";
+import { login1 } from "../../../Utility/Redux/Slices/AuthSlice";
 
 const Signup = () => {
 
@@ -59,7 +59,7 @@ const Signup = () => {
 
   useEffect(() => {
     if (status === 201) {
-      dispatch(login(formData))
+      dispatch(login1(formData))
       navigate('/faceRecognition')
       
     } else if (status && status !== 200) {

@@ -1,4 +1,4 @@
-// Login.js
+
 import React, { useState, useEffect } from 'react';
 import { MdEmail } from "react-icons/md";
 import { RiLockPasswordFill } from "react-icons/ri";
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import '../LoginCss/Login.css';
 import Spinner from '../../../Components/Spinner';
 import { getFaceIo } from '../../../Utility/Redux/Slices/FaceIoSlice';
+import { login1 } from "../../../Utility/Redux/Slices/AuthSlice";
 const Login = (props) => {
   const [input, setInput] = useState({});
   const { data, status, error,isLoading, login } = useLoginHook({ data: input });
@@ -67,7 +68,7 @@ const Login = (props) => {
         }
     finally {
       if(FaceUser !==null)
-        dispatch(login(FaceUser))
+        dispatch(login1(FaceUser))
       setTimeout(() => {
         props.setVisble(true);
       }, 2500); 
@@ -77,8 +78,9 @@ const Login = (props) => {
   };  
 
   useEffect(() => {
+    console.log(data);
     if (status === 200) {
-      dispatch(login(data));
+      dispatch(login1(data));
       navigate('/forgot-password')
       
     } else if (status && status !== 200) {
