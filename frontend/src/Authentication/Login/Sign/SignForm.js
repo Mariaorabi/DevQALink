@@ -13,7 +13,7 @@ const SignForm = (props) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(setFaceIo(new faceIO("fioac3b3")))
+    dispatch(setFaceIo(new faceIO(process.env.REACT_APP_FACEIO_PUBLIC_ID)))
       // faceio = new faceIO("fioac3b3");
   }, []);
 
