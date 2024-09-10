@@ -43,28 +43,28 @@ async function processJob(readyJob) {
 }
 
 async function allocateResources(cluster, readyJob, poolId,poolName) {
-    console.log("in allocate res", cluster, readyJob);
+   // console.log("in allocate res", cluster, readyJob);
     try {
         cluster.status = 'running';
         await cluster.save();
 
-        console.log("Calling allocatePhase3Job..."); 
+        //console.log("Calling allocatePhase3Job..."); 
         const job = await allocatePhase3Job(readyJob,cluster,poolId,poolName); 
-        console.log("Job returned from allocatePhase3Job:", job); 
+       // console.log("Job returned from allocatePhase3Job:", job); 
 
         await job.save(); 
-        console.log('Job and cluster are now running.');
+      //  console.log('Job and cluster are now running.');
 
         // Create a deep copy of readyJob before removal
         const readyJobCopy = JSON.parse(JSON.stringify(readyJob));
-        console.log("readyJob before removal:", readyJob);
+       // console.log("readyJob before removal:", readyJob);
         if (readyJob.remove) {
             await readyJob.remove(); // If remove is available, use it
         } else {
             await Job.deleteOne({ _id: readyJob._id }); // Fallback to deleteOne
         }
         
-        console.log("readyJob successfully removed.");
+      //  console.log("readyJob successfully removed.");
         return { job, readyJobCopy };
     } catch (error) {
         console.error('Error in allocateResources:', error); 

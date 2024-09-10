@@ -147,9 +147,9 @@ function Row(props) {
                                             {/* Test Result */}
                                             <TableCell>
                                                 {row.tests[index].test_result
-                                                    ? row.tests[index].test_result === 'Success'
-                                                        ? 'Pass'
-                                                        : 'Fail'
+                                                    ? row.tests[index].test_result.includes('Success')
+                                                        ? 'Pass: ' + row.tests[index].test_result
+                                                        : 'Fail: ' + row.tests[index].test_result
                                                     : 'Pending'}
                                             </TableCell>
                                         </TableRow>
@@ -208,7 +208,7 @@ export default function JobTable() {
         // Set up polling interval
         const interval = setInterval(() => {
             fetchJobs();
-        }, 5000); // Poll every 5 seconds
+        }, 5000);
 
         return () => clearInterval(interval);
     }, []); // Empty dependency array to run only once on mount
