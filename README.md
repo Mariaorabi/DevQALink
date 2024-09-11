@@ -6,6 +6,7 @@ DevQALink is a robust framework that seamlessly connects QA and development team
 
 Open the project folder in Visual Studio Code.
 
+## 
 Right click on "backend" folder -> "open in integrated terminal"
 
 run the following codes:
