@@ -12,17 +12,17 @@ Right click on "backend" folder -> "open in integrated terminal"
 run the following codes:
 
 ## To install "node modules"
-- npm install
+- ## npm install
 
 ## Start the server
-- npm start
+- ## npm start
 
 
 Right click on "index.js" file inside backend folder -> "open in integrated terminal"
 
 run the following code
 '
-- node .\index.js
+- ## node .\index.js
 '
 
 
@@ -32,8 +32,8 @@ run the following codes:
 
 ## To install "node modules"
 
-npm install
+- ## npm install
 
 ## Start the frontend
-npm start
+- ## npm start
 
