@@ -10,7 +10,7 @@ Right click on "backend" folder -> "open in integrated terminal"
 
 run the following code
 
-## To install node modules
+## To install "node modules"
 - npm install
 '
 ## Start the server
@@ -28,7 +28,7 @@ Right click on "frontend" folder -> "open in integrated terminal"
 
 run the following code
 
-## To install node modules
+## To install "node modules"
 '
 npm install
 '
