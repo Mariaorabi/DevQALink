@@ -12,10 +12,10 @@ run the following codes
 
 ## To install "node modules"
 - npm install
-'
+
 ## Start the server
 - npm start
-'
+
 
 Right click on "index.js" file inside backend folder -> "open in integrated terminal"
 
@@ -32,7 +32,7 @@ run the following code
 ## To install "node modules"
 '
 npm install
-'
+
 ## Start the server
 npm start
-'
+
