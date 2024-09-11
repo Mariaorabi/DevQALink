@@ -1,4 +1,4 @@
-const ReadyJob = require('../models/readyJobsModel');
+const ReadyJob = require('../../models/execution-models/readyJobsModel');
 const moment = require('moment-timezone');
 const runJob = require('./jobController');
 

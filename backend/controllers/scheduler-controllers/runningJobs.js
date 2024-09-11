@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Phase3Jobs = require('../models/phase3Job');
+const Phase3Jobs = require('../../models/execution-models/phase3Job');
 
 
 exports.getRunningJobs = async (req, res) => {

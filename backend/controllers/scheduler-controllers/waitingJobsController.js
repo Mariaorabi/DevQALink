@@ -1,4 +1,4 @@
-const WaitingJob = require('../models/waitingJobsModel');
+const WaitingJob = require('../../models/scheduler-models/waitingJobsModel');
 const moment = require('moment-timezone');
 
 

@@ -1,5 +1,5 @@
 // controllers/poolsController.js
-const Pool = require('../models/pool');
+const Pool = require('../../models/resources-models/pool');
 
 // Handle GET request to list all pools
 exports.getAllPools = async (req, res) => {

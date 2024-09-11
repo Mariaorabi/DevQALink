@@ -1,13 +1,13 @@
 require('dotenv').config(); // Load environment variables
 
 const mongoose = require('mongoose');
-const connectDB = require('../config/database');
+const connectDB = require('../../config/database');
 
-const Job = require('../models/readyJobsModel');
-const Cluster = require('../models/cluster');
-const Pool = require('../models/pool');
-const phase3Job = require('../models/phase3Job');
-const WaitingJob = require('../models/waitingJobsModel');
+const Job = require('../../models/execution-models/readyJobsModel');
+const Cluster = require('../../models/resources-models/cluster');
+const Pool = require('../../models/resources-models/pool');
+const phase3Job = require('../../models/execution-models/phase3Job');
+const WaitingJob = require('../../models/scheduler-models/waitingJobsModel');
 
 
 // a ready job calls thing function
