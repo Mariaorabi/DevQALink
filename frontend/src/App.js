@@ -61,7 +61,7 @@ const App = () => {
                 <TopTabs />
                 <div style={{ padding: '20px', flexGrow: 1 }}>
                     <Routes>
-                        <Route path="/" element={<Home />} />
+                        <Route path="/resources" element={<Home />} />
                         <Route path="/my-work" element={<MyWork />} />
                         <Route path="/dashboards" element={<Dashboards />} />
                         <Route path="/help" element={<Help />} />
