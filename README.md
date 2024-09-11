@@ -21,7 +21,7 @@ Right click on "index.js" file inside backend folder -> "open in integrated term
 
 run the following code
 '
-node .\index.js
+- node .\index.js
 '
 
 
