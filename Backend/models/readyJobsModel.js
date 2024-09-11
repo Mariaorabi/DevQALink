@@ -18,11 +18,9 @@ const readyJobSchema = new mongoose.Schema({
   status: { type: String, default: 'Ready' },
   activationStatus: { type: String, default: 'Activated' },
   cluster: { type: mongoose.Schema.Types.ObjectId, ref: 'Cluster', default: null },
+  resumeJob: { type: String, enum: ['Resume', 'Pause'], default: 'Resume', required: true },
   triggeredBy:{ type: String, required: true },
 });
-
-// Apply auto-increment plugin to the schema
-// readyJobSchema.plugin(autoIncrement, { inc_field: 'jobId', start_seq: 1 });
 
 const ReadyJob = mongoose.model('ReadyJob', readyJobSchema);
 

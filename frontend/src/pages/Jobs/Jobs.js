@@ -4,6 +4,8 @@ import './Jobs.css';
 import JobForm from './JobForm';
 import EditJobForm from './EditJobForm';
 import DeleteJobForm from './DeleteJobForm';
+import pauseIcon from './pause.png'; // Adjust the relative path as needed
+import resumeIcon from './play-button.jpg';
 
 const fetchWaitingJobsData = async () => {
     try {
@@ -66,6 +68,7 @@ const Jobs = () => {
             const job = await jobData.json();
             console.log("Moving this job from waiting to ready: ", job);
 
+            if (job.resumeJob === "Resume") {
             // API to insert the job into ReadyJobs
             await fetch(`http://localhost:3000/jobs/readyJobs/addJob`, { 
                 method: 'POST',
@@ -81,6 +84,7 @@ const Jobs = () => {
             console.log(`Job ${jobId} deleted from WaitingJobs`);
             
             handleJobDeleted(); // Update the waiting jobs and ready jobs lists
+        }
         
         } catch (error) {
             console.error(`Error moving job ${jobId} to ReadyJobs:`, error);
@@ -138,28 +142,28 @@ const Jobs = () => {
     }, [waitingJobs, moveJobToReady]); // Only re-run when waitingJobs or moveJobToReady changes
 
     // Listener for when readyJobs has jobs
-    useEffect(() => {
-        if (readyJobs.length > 0) {
-            console.log("Hello:)")
-            try {
-                const job = readyJobs[0];
-                console.log(`Job ${job.jobId} is running...`);
-                // if (job.jobRunType === 'Immediately') {
-                //     console.log(`Job ${job.jobId} is ready to run immediately`);
-                //     // Call the API to run the job immediately
-                //     fetch(`http://localhost:3000/jobs/readyJobs/runJobById/${job.jobId}`, {
-                //         method: 'PUT',
-                //         headers: {
-                //             'Content-Type': 'application/json'
-                //         }
-                //     });
-                //     console.log(`Job ${job.jobId} is running...`);
-                // }
-            } catch (error) {
-                console.error('Error running job:', error);
-            }   
-        }
-    }, [readyJobs]); // This useEffect will run when readyJobs changes
+    // useEffect(() => {
+    //     if (readyJobs.length > 0) {
+    //         console.log("Hello:)")
+    //         try {
+    //             const job = readyJobs[0];
+    //             console.log(`Job ${job.jobId} is running...`);
+    //             // if (job.jobRunType === 'Immediately') {
+    //             //     console.log(`Job ${job.jobId} is ready to run immediately`);
+    //             //     // Call the API to run the job immediately
+    //             //     fetch(`http://localhost:3000/jobs/readyJobs/runJobById/${job.jobId}`, {
+    //             //         method: 'PUT',
+    //             //         headers: {
+    //             //             'Content-Type': 'application/json'
+    //             //         }
+    //             //     });
+    //             //     console.log(`Job ${job.jobId} is running...`);
+    //             // }
+    //         } catch (error) {
+    //             console.error('Error running job:', error);
+    //         }   
+    //     }
+    // }, [readyJobs]); // This useEffect will run when readyJobs changes
 
     const handleJobAdded = async (newJob) => {
         try {
@@ -223,16 +227,65 @@ const Jobs = () => {
         setDeletingJob(null);
     };
 
+    const changeResumeJob = async (job) => {
+        if (job.resumeJob === "Pause") {
+            job.resumeJob = "Resume";
+        }
+        else {
+            job.resumeJob = "Pause";
+        }
+        try {
+            if (job.status === "Waiting") {
+                await fetch(`http://localhost:3000/jobs/waitingJobs/updateJobById/${job.jobId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(job)
+                });
+                console.log(`Job ${job.jobId} from waiting is ${job.resumeJob}d`);
+                const updatedWaitingJobs = await fetchWaitingJobsData();
+                setWaitingJobs(updatedWaitingJobs);
+            }
+            else {
+                await fetch(`http://localhost:3000/jobs/readyJobs/updateJobById/${job.jobId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(job)
+                });
+                console.log(`Job ${job.jobId} from ready is ${job.resumeJob}d`);
+                const updatedReadyJobs = await fetchReadyJobsData();
+                setReadyJobs(updatedReadyJobs);
+            }
+        }
+        catch (error) {
+            console.error('Error changing job status:', error);
+        }
+    };
+
+    const isPaused =  (job) => {
+        if (job.resumeJob === "Pause") {
+            return true;
+        }
+        else {
+            return false;
+        }
+    };
+
+
+
     // const formatTestsToRun = (tests) => {
     //     if (!tests || !Array.isArray(tests) || tests.length === 0) return '-';
-    
+
     //     let formattedTests = '';
     //     for (let i = 0; i < tests.length; i += 2) {
     //         const pair = tests.slice(i, i + 2);
     //         console.log('pair:', pair);
     //         formattedTests += pair.join(', ') + ', ';
     //     }
-    
+
     //     return formattedTests.slice(0, -2); // Remove trailing comma and space
     // };
 
@@ -264,6 +317,15 @@ const Jobs = () => {
                 <td>{job.createdTime}</td>
                 <td>{job.activationStatus}</td>
                 <td>{job.estimatedTime}</td>
+                <td>
+                <button className="action-btn pause-resume-btn" onClick={() => changeResumeJob(job)}>
+                    {isPaused(job) ? (
+                    <img src={resumeIcon} alt="Resume" className="icon" />
+                    ) : (
+                    <img src={pauseIcon} alt="Pause" className="icon" />
+                    )}
+                </button>
+                </td>
                 {isWaiting && (
                     <td>
                         <button className="action-btn edit-btn" onClick={() => openEditForm(job)}>Edit</button>
@@ -305,6 +367,7 @@ const Jobs = () => {
                             <th>Created Time</th>
                             <th>Activation Status</th>
                             <th>Estimated Time</th>
+                            <th>Pause/ Resume</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
@@ -331,6 +394,7 @@ const Jobs = () => {
                             <th>Created Time</th>
                             <th>Activation Status</th>
                             <th>Estimated Time</th>
+                            <th>Pause/ Resume</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>

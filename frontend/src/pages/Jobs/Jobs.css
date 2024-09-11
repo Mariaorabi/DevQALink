@@ -112,3 +112,46 @@ h1 {
     word-break: break-word; /* Break words if necessary */
     padding: 15px; /* Increased padding for better readability */
 }
+
+
+
+
+
+
+
+
+
+
+/* Pause/Resume Button */
+
+.pause-resume-btn {
+
+    background-color: #FF9800; /* Orange for pause/resume */
+
+    width:40px; /* Set the width */
+
+}
+
+
+
+
+.pause-resume-btn:hover {
+
+    background-color: #FB8C00; /* Slightly darker orange on hover */
+
+}
+
+
+
+
+.action-btn .icon {
+
+    width: 16px; /* Adjust size of the icon */
+
+    height: 16px;
+
+    margin-right: 5px; /* Add space between icon and text */
+
+    vertical-align: middle; /* Align icon with the text */
+
+}

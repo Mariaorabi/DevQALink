@@ -7,7 +7,7 @@ const moment = require('moment-timezone');
 // Handle POST request to add a new waiting job
 exports.addWaitingJob = async (req, res) => {
     try {
-        const { jobName, testsToRun, resourcePool, buildVersion, jobRunType, scheduleType, scheduleTime, priorityLevel, estimatedHours, estimatedMinutes } = req.body;
+        const { jobName, testsToRun, resourcePool, buildVersion, jobRunType, scheduleType, scheduleTime, priorityLevel, estimatedHours, estimatedMinutes, triggeredBy } = req.body;
 
         // Check if testsToRun is provided and not empty
         if (!testsToRun || testsToRun.length === 0) {
@@ -15,7 +15,7 @@ exports.addWaitingJob = async (req, res) => {
         }
         
         const estimatedTime = `${estimatedHours}h ${estimatedMinutes}m`;
-
+        
         // Validate scheduleType
         const validScheduleTypes = ['One-Time Job', 'Reoccurring Job'];
         const validScheduleType = validScheduleTypes.includes(scheduleType) ? scheduleType : '-'; // Default to '-' if invalid
@@ -36,7 +36,8 @@ exports.addWaitingJob = async (req, res) => {
             priorityLevel,
             estimatedTime,
             createdDate,
-            createdTime
+            createdTime,
+            triggeredBy: "example",
         });
 
         const savedJob = await newJob.save();
@@ -97,7 +98,8 @@ exports.updateJobById = async (req, res) => {
             createdDate,
             createdTime,
             estimatedTime,
-            activationStatus
+            activationStatus,
+            resumeJob,
         } = req.body;
 
         console.log("req body is: ", req.body); // Log entire request body
@@ -114,6 +116,7 @@ exports.updateJobById = async (req, res) => {
         console.log("createdTime: ", createdTime);
         console.log("estimatedTime: ", estimatedTime);
         console.log("activationStatus: ", activationStatus);
+        console.log("resumeJob: ", resumeJob);
 
 
         // Create an object for fields that should be updated
@@ -134,6 +137,7 @@ exports.updateJobById = async (req, res) => {
         if (createdTime !== undefined) updateFields.createdTime = createdTime;
         if (estimatedTime !== undefined) updateFields.estimatedTime = estimatedTime;
         if (activationStatus !== undefined) updateFields.activationStatus = activationStatus
+        if (resumeJob !== undefined) updateFields.resumeJob = resumeJob;
 
         // Update the created date and time for tracking purposes
         // const nowInJerusalem = moment().tz('Asia/Jerusalem');
