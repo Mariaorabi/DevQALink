@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import '../style/ServerView.css';
 
+
 function ServerView() {
     const { poolId, clusterId } = useParams();
     const [cluster, setCluster] = useState(null);
@@ -69,6 +70,9 @@ function ServerView() {
 
     return (
         <div className="server-view-container">
+            <a href='/' title="Versions & Builds">
+                <button>Home Page</button>
+            </a>
             <h1>Manage the Servers of {cluster.name}</h1>
             <p>Located in the {pool.name} Pool</p>
 

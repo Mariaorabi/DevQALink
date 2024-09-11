@@ -42,6 +42,9 @@ function ClusterView() {
 
     return (
         <div className="cluster-view-container">
+            <a href='/' title="Versions & Builds">
+                <button>Home Page</button>
+            </a>
             <h1>{pool.name} Clusters</h1>
             <p className="cluster-description">
                 Explore the clusters of {pool.name} and choose the one you want to manage.

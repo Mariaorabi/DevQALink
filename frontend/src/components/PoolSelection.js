@@ -26,6 +26,9 @@ function PoolSelection() {
 
     return (
         <div>
+            <a href='/' title="Versions & Builds">
+                <button>Home Page</button>
+            </a>
             <h1>Select a Pool</h1>
             <div className="pool-selection-container">
                 {pools.map((pool) => (
