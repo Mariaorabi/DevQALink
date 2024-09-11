@@ -9,11 +9,14 @@ Open the project folder in Visual Studio Code.
 Right click of "backend" folder -> "open in integrated terminal"
 
 run the following code
+
+## To install node modules
 '
-npm install    ##To install node modules
+- npm install
 '
+## Start the server
 '
-npm start
+- npm start
 '
 
 Right click of "index.js" file inside backend folder -> "open in integrated terminal"
