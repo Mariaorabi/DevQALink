@@ -7,7 +7,6 @@ const fetchVersions = async () => {
       throw new Error(`HTTP error! status: ${response.status}`);
   }
   const data = await response.json();
-  console.log(data)
   return(data);
 } 
 catch (error) {
@@ -56,7 +55,7 @@ const VersionBuildPage = () => {
     if (newBuildNumber) {
       setVersionData({
         ...versionData,
-        [versionNumber]: [...versionData[versionNumber], newBuildNumber],
+        [versionNumber]: [...versionData[versionNumber], newBuildNumber]
       });
     }
   };
