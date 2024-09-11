@@ -1,10 +1,10 @@
-VersionBuildPage.css
-
+/* VersionBuildPage.css */
 .container {
   max-width: 900px;
   margin: auto;
   padding: 20px;
   font-family: Arial, sans-serif;
+  background-color: white;
 }
 
 h1 {
