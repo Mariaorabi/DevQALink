@@ -6,7 +6,7 @@ DevQALink is a robust framework that seamlessly connects QA and development team
 
 Open the project folder in Visual Studio Code.
 
-Right click of "backend" folder -> "open in integrated terminal"
+Right click of ## "backend" ## folder -> "open in integrated terminal"
 
 run the following code
 
@@ -15,7 +15,6 @@ run the following code
 - npm install
 '
 ## Start the server
-'
 - npm start
 '
 
