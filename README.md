@@ -8,7 +8,7 @@ Open the project folder in Visual Studio Code.
 
 Right click on "backend" folder -> "open in integrated terminal"
 
-run the following code
+run the following codes
 
 ## To install "node modules"
 - npm install
@@ -23,6 +23,7 @@ run the following code
 '
 node .\index.js
 '
+
 
 Right click on "frontend" folder -> "open in integrated terminal"
 
