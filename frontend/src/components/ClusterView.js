@@ -12,7 +12,7 @@ function ClusterView() {
     useEffect(() => {
         const fetchPool = async () => {
             try {
-                const response = await axios.get(`http://localhost:3030/pools/${poolId}`);
+                const response = await axios.get(`http://localhost:5000/pools/${poolId}`);
                 setPool(response.data);
             } catch (error) {
                 console.error('Error fetching pool:', error);
@@ -21,7 +21,7 @@ function ClusterView() {
 
         const fetchClusters = async () => {
             try {
-                const response = await axios.get(`http://localhost:3030/clusters/${poolId}`);
+                const response = await axios.get(`http://localhost:5000/clusters/${poolId}`);
                 setClusters(response.data);
             } catch (error) {
                 console.error('Error fetching clusters:', error);

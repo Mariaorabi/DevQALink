@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Server = require('./models/server');
 const Cluster = require('./models/cluster');
 const Pool = require('./models/pool');
-const connectDB = require('./db');
+const connectDB = require('./dbArchitecture');
 
 const seedData = async () => {
     try {

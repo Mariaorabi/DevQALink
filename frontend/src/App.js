@@ -1,10 +1,10 @@
 import React from "react";
-import VersionBuildPage from "./VersionBuildPage";
+import Mainpage from "./Mainpage";
 
 function App() {
   return (
     <div className="App">
-      <VersionBuildPage />
+      <Mainpage />
     </div>
   );
 }

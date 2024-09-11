@@ -14,7 +14,7 @@ function ServerView() {
     useEffect(() => {
         const fetchCluster = async () => {
             try {
-                const clustersResponse = await axios.get(`http://localhost:3030/clusters/${poolId}`);
+                const clustersResponse = await axios.get(`http://localhost:5000/clusters/${poolId}`);
                 const clusters = clustersResponse.data;
                 const selectedCluster = clusters.find((cluster) => cluster._id === clusterId);
                 if (selectedCluster) {
@@ -29,7 +29,7 @@ function ServerView() {
 
         const fetchServers = async () => {
             try {
-                const serversResponse = await axios.get(`http://localhost:3030/servers/${clusterId}`);
+                const serversResponse = await axios.get(`http://localhost:5000/servers/${clusterId}`);
                 setServers(serversResponse.data);
             } catch (error) {
                 console.error('Error fetching servers:', error);
@@ -38,7 +38,7 @@ function ServerView() {
 
         const fetchPool = async () => {
             try {
-                const poolResponse = await axios.get(`http://localhost:3030/pools/${poolId}`);
+                const poolResponse = await axios.get(`http://localhost:5000/pools/${poolId}`);
                 setPool(poolResponse.data);
             } catch (error) {
                 console.error('Error fetching pool:', error);

@@ -1,20 +1,23 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter , Routes, Route } from 'react-router-dom';
 import PoolSelection from './components/PoolSelection';
 import ClusterView from './components/ClusterView';
 import ServerView from './components/ServerView';
-import './style/App.css';
+import './Mainpage.css';
+import VersionBuildPage from './VersionBuildPage';
 
-function App() {
+function Mainpage() {
     return (
-        <Router>
+        <BrowserRouter>
             <Routes>
-                <Route path="/" element={<PoolSelection />} />
+                <Route index element={<VersionBuildPage />} />
+                <Route path="/PoolSelection" element={<PoolSelection />} />
                 <Route path="/clusters/:poolId" element={<ClusterView />} />
                 <Route path="/servers/:poolId/:clusterId" element={<ServerView />} />
             </Routes>
-        </Router>
+        </BrowserRouter>
+
     );
 }
 
-export default App;
+export default Mainpage;

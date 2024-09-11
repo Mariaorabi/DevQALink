@@ -63,3 +63,9 @@ button:hover {
   font-size: 16px;
   line-height: 1.5;
 }
+
+h4 {
+  align-items: right;
+  text-align: right;
+}
+

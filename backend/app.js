@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-require('./seed'); // Automatically runs the seed script
+require('./seedPoolsClusters'); // Automatically runs the seed script
 const upload = multer();
 const app = express();
-const port = 3030;
+const port = 5000;
 
 // CORS middleware
 app.use((req, res, next) => {
