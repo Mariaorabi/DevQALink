@@ -1,0 +1,57 @@
+/* FailureChart.css */
+
+.failure-chart-container {
+  display: inline-block;
+  width: 45%; /* Adjust width as necessary */
+  vertical-align: top;
+  margin-right: 10px; /* Add some space between the two charts */
+}
+
+.failure-chart-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.recharts-bar-label {
+  font-size: 14px;
+  font-weight: bold;
+  fill: #555;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 5px;
+  color: #fff;
+  padding: 10px;
+  font-size: 14px;
+  text-align: left;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+.custom-tooltip .label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
+.custom-tooltip .desc {
+  font-size: 14px;
+}
+
+/* LabelList customization */
+.recharts-bar-label {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 0.5px;
+  font-size: 12px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover effect for the bars */
+.recharts-bar-rectangle:hover {
+  fill: #ff7f50 !important;
+  transition: fill 0.3s ease;
+}

@@ -1,0 +1,73 @@
+/* DashboardLayout.css */
+
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .top-bar {
+    background-color: #003366;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    z-index: 1000;
+    position: relative;
+  }
+  
+  .side-nav {
+    background-color: #003366;
+    color: white;
+    width: 240px;
+    min-height: calc(100vh - 50px); /* Adjust based on top bar height */
+    position: fixed;
+    top: 50px; /* Adjust based on top bar height */
+    left: 0;
+    padding-top: 20px;
+    z-index: 1000;
+  }
+  
+  .side-nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .side-nav ul li {
+    padding: 15px 10px; /* Increase padding to make the clickable area larger */
+    line-height: 1.5; /* Increase line height for better spacing */
+  }
+  
+  .side-nav ul li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    height: 100%; /* Ensure the anchor tag fills the entire li element */
+  }
+  
+  .side-nav ul li a:hover {
+    background-color: white;
+    color: #003366;
+  }
+  
+  .main-content {
+    margin-left: 240px; /* Width of the sidebar */
+    padding: 20px;
+    background-color: #f4f6f8;
+    height: calc(100vh - 50px); /* Adjust based on top bar height */
+    overflow-y: auto;
+    z-index: 500;
+    position: relative;
+  }
+  .card-content {
+    padding: 20px;
+  }
+  
+  .card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
