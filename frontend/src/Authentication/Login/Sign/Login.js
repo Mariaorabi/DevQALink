@@ -81,7 +81,7 @@ const Login = (props) => {
     console.log(data);
     if (status === 200) {
       dispatch(login1(data));
-      navigate('/forgot-password')
+      navigate('/home')
       
     } else if (status && status !== 200) {
       setMsg(`${error}`);

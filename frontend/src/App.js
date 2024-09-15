@@ -1,5 +1,4 @@
 
-import './App.css';
 import Sign from './Authentication/Login/Sign/Sign';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './Authentication/Login/Sign/Login';
@@ -9,7 +8,6 @@ import {Provider} from 'react-redux';
 import { store } from './Utility/Redux/store';
 import { useEffect } from 'react';
 import FaceRecognitionSignup from './Authentication/Login/Sign/FaceRecognitionSignup';
-import TopTabs from './components/TopTabs'; // Import the TopTabs component
 import Home from './pages/Home';
 import MyWork from './pages/MyWork';
 import Dashboards from './pages/Dashboards';
@@ -20,20 +18,24 @@ import Running from './pages/Running/RunningJobTable'; // Running jobs page
 import Completed from './pages/Completed'; // Completed jobs page
 import Portfolios from './pages/Portfolios';
 import Programs from './pages/Programs';
+import TopTabs from './Components/TopTabs';
 
 function App() {
 
   return (
-
     <Provider store={store}>
 
     <Router>
-       <TopTabs />
       <Routes>
         <Route path="/" element={<Sign />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path='/faceRecognition' element={<FaceRecognitionSignup/>}/>
-         <Route path="/" element={<Home />} />
+         
+      </Routes>
+      <TopTabs/>
+
+      <Routes>
+<Route path="/home" element={<Home />} />
                         <Route path="/my-work" element={<MyWork />} />
                         <Route path="/dashboards" element={<Dashboards />} />
                         <Route path="/help" element={<Help />} />
@@ -43,6 +45,7 @@ function App() {
                         <Route path="/jobs/completed" element={<Completed />} /> {/* Route for Completed Jobs */}
                         <Route path="/portfolios" element={<Portfolios />} />
                         <Route path="/programs" element={<Programs />} />
+
       </Routes>
 
 

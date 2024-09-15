@@ -45,6 +45,8 @@ const Jobs = () => {
     const [editingJob, setEditingJob] = useState(null);
     const [deletingJob, setDeletingJob] = useState(null);
 
+    
+
     // Fetch data when the component mounts
     useEffect(() => {
         const fetchData = async () => {
@@ -93,6 +95,9 @@ const Jobs = () => {
 
     // Polling mechanism to check scheduleTime every minute
     useEffect(() => {
+
+
+        //check if the scheduled job time to run is arrived 
         const checkJobsSchedule = () => {
             console.log('In checkJobsSchedule');
             const currentTime = new Date();
@@ -112,6 +117,8 @@ const Jobs = () => {
                 }
             });
         };
+
+        //
 
         const startPollingAtNextMinute = () => {
             console.log('In startPollingAtNextMinute');
@@ -141,29 +148,7 @@ const Jobs = () => {
         return () => cleanup();
     }, [waitingJobs, moveJobToReady]); // Only re-run when waitingJobs or moveJobToReady changes
 
-    // Listener for when readyJobs has jobs
-    // useEffect(() => {
-    //     if (readyJobs.length > 0) {
-    //         console.log("Hello:)")
-    //         try {
-    //             const job = readyJobs[0];
-    //             console.log(`Job ${job.jobId} is running...`);
-    //             // if (job.jobRunType === 'Immediately') {
-    //             //     console.log(`Job ${job.jobId} is ready to run immediately`);
-    //             //     // Call the API to run the job immediately
-    //             //     fetch(`http://localhost:3000/jobs/readyJobs/runJobById/${job.jobId}`, {
-    //             //         method: 'PUT',
-    //             //         headers: {
-    //             //             'Content-Type': 'application/json'
-    //             //         }
-    //             //     });
-    //             //     console.log(`Job ${job.jobId} is running...`);
-    //             // }
-    //         } catch (error) {
-    //             console.error('Error running job:', error);
-    //         }   
-    //     }
-    // }, [readyJobs]); // This useEffect will run when readyJobs changes
+   
 
     const handleJobAdded = async (newJob) => {
         try {
@@ -275,19 +260,6 @@ const Jobs = () => {
     };
 
 
-
-    // const formatTestsToRun = (tests) => {
-    //     if (!tests || !Array.isArray(tests) || tests.length === 0) return '-';
-
-    //     let formattedTests = '';
-    //     for (let i = 0; i < tests.length; i += 2) {
-    //         const pair = tests.slice(i, i + 2);
-    //         console.log('pair:', pair);
-    //         formattedTests += pair.join(', ') + ', ';
-    //     }
-
-    //     return formattedTests.slice(0, -2); // Remove trailing comma and space
-    // };
 
     const formatTestsToRun = (tests) => {
         // Check if tests is an array and is not empty

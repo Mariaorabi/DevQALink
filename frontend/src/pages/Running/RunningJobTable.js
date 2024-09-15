@@ -171,7 +171,7 @@ export default function JobTable() {
     // Function to fetch running jobs
     const fetchJobs = async () => {
         try {
-            const response = await fetch('http://localhost:3000/Jobs/getRunningJobs');
+            const response = await fetch('http://localhost:3000/jobs/getRunningJobs');
             const data = await response.json();
             
             // Filter jobs with "running" status
@@ -208,7 +208,7 @@ export default function JobTable() {
         // Set up polling interval
         const interval = setInterval(() => {
             fetchJobs();
-        }, 5000);
+        }, 1000);
 
         return () => clearInterval(interval);
     }, []); // Empty dependency array to run only once on mount
